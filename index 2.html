@@ -1,0 +1,1455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FF7A2F">
+<meta name="description" content="A year-long Vedic maths game: all 16 sutras and 13 upasutras, with picture stories, missions, practice and a Hero Lab.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ninja Maths">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font-family:system-ui,-apple-system,'Segoe UI',sans-serif;font-size:14px}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>Ninja Maths Dojo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: one-column phone app on a tatami-mat ground; chunky game buttons, character stage on top */
+:root{
+  --bg:#EEF2DC; --mat:#E2E8C4; --line:#CDD5AA;
+  --ink:#1F2A4D; --muted:#5B6683; --card:#FFFFFF;
+  --accent:#FF7A2F; --accent-d:#D9560E;
+  --leaf:#2E9E6B; --leaf-d:#1F7A50;
+  --gold:#F5B700; --gold-d:#C98A00;
+  --wrong:#E0445A; --wrong-bg:#FFE4E8; --right-bg:#DDF5E8;
+  --display:'Baloo 2', 'Trebuchet MS', system-ui, sans-serif;
+  --body:'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme:light;
+}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.45;
+  background-image:repeating-linear-gradient(90deg,transparent 0 46px,rgba(120,135,70,.07) 46px 48px);}
+*{box-sizing:border-box}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.app{max-width:540px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 40px;display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{font-family:var(--display);line-height:1.1;margin:0;text-wrap:balance}
+h2{font-size:1.45rem}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-family:var(--display);font-weight:800;font-size:1.5rem;letter-spacing:.2px}
+.brand small{display:block;font-family:var(--body);font-weight:700;font-size:.78rem;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.starpill{display:flex;align-items:center;gap:6px;background:var(--card);border:2px solid var(--line);border-radius:999px;padding:4px 12px 4px 8px;font-weight:800;font-variant-numeric:tabular-nums}
+.starpill svg{width:22px;height:22px}
+.iconbtn{width:44px;height:44px;border-radius:14px;background:var(--card);border:2px solid var(--line);display:grid;place-items:center;font-weight:800;font-size:1.2rem}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:center;background:var(--card);border:2px solid var(--line);border-radius:26px;padding:14px}
+.stage{background:radial-gradient(circle at 50% 70%,#FFF6D6 0 45%,transparent 46%),var(--mat);border-radius:20px;aspect-ratio:4/5;max-width:100%;display:grid;place-items:center;overflow:hidden}
+.stage svg{width:92%;height:auto}
+.rank{display:flex;flex-direction:column;gap:10px;min-width:0}
+.ninjaname{font-family:var(--display);font-weight:800;font-size:1.6rem;overflow-wrap:anywhere}
+.belt{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:.95rem}
+.belt i{width:34px;height:12px;border-radius:4px;border:1.5px solid rgba(0,0,0,.25);display:inline-block}
+.meta{color:var(--muted);font-weight:700;font-size:.92rem}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 20px;border-radius:18px;font-family:var(--display);font-weight:800;font-size:1.2rem;background:var(--accent);color:#fff;box-shadow:0 5px 0 var(--accent-d);transition:transform .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--accent-d)}
+.btn.green{background:var(--leaf);box-shadow:0 5px 0 var(--leaf-d)}
+.btn.ghost{background:var(--card);color:var(--ink);border:2px solid var(--line);box-shadow:0 4px 0 var(--line)}
+.btn.block{width:100%}
+.btn.small{min-height:42px;font-size:1rem;padding:0 14px}
+
+/* path */
+.path{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;position:relative}
+.path::before{content:"";position:absolute;left:31px;top:20px;bottom:20px;width:4px;background:var(--line);border-radius:4px}
+.unit{position:relative;display:grid;grid-template-columns:62px minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;text-align:left;background:var(--card);border:2px solid var(--line);border-radius:20px;padding:10px 12px 10px 10px}
+.unit[disabled]{opacity:.6;cursor:default;background:#F6F8EC}
+.disc{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;font-family:var(--display);font-weight:800;font-size:1.3rem;margin-left:4px;box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.unit .t{font-family:var(--display);font-weight:800;font-size:1.12rem;line-height:1.15}
+.unit .s{font-size:.84rem;color:var(--muted);font-weight:700;font-style:italic;overflow-wrap:anywhere}
+.tag{font-size:.78rem;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--mat);white-space:nowrap}
+.tag.new{background:var(--accent);color:#fff}
+.tag.perfect{background:var(--gold);color:var(--ink)}
+.tag.done{background:var(--right-bg);color:var(--leaf-d)}
+.beltmini{display:inline-block;width:20px;height:8px;border-radius:3px;border:1px solid rgba(0,0,0,.25);vertical-align:middle;margin-left:6px}
+
+/* unit screen */
+.uhead{display:flex;gap:12px;align-items:center}
+.uhead .disc{flex:none;margin:0}
+.sutra{color:var(--muted);font-weight:700;font-style:italic}
+.kid{background:#FFF1E6;border:2px dashed #FFB98A;border-radius:18px;padding:10px 14px;font-weight:800}
+.lesson{background:var(--card);border:2px solid var(--line);border-radius:24px;padding:18px;display:flex;flex-direction:column;gap:12px;min-height:290px}
+.lesson h3{font-size:1.35rem}
+.lesson p{margin:0}
+.ex{background:var(--bg);border-radius:16px;padding:12px 14px}
+.exq{font-family:var(--display);font-weight:800;font-size:1.6rem}
+.ex ol{margin:6px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:4px}
+.exa{font-family:var(--display);font-weight:800;font-size:1.3rem;color:var(--leaf-d);margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--bg);border-radius:12px;padding:6px 12px;font-family:var(--display);font-weight:800;font-size:1.2rem}
+pre.lay{margin:0;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:1.15rem;font-weight:700;background:var(--bg);border-radius:14px;padding:10px 14px;overflow-x:auto}
+.tip{font-size:.92rem;color:var(--muted);font-weight:700}
+.pager{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.dots{display:flex;gap:6px}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--accent);width:22px;border-radius:6px}
+
+/* quiz */
+.qbar{display:flex;align-items:center;gap:12px}
+.prog{flex:1;height:14px;background:var(--mat);border-radius:999px;overflow:hidden}
+.prog b{display:block;height:100%;background:var(--leaf);border-radius:999px;transition:width .3s}
+.qcard{background:var(--card);border:2px solid var(--line);border-radius:26px;padding:18px;text-align:center;display:flex;flex-direction:column;gap:12px}
+.qnum{font-weight:800;color:var(--muted);font-size:.85rem;letter-spacing:.06em;text-transform:uppercase}
+.qtext{font-family:var(--display);font-weight:800;font-size:clamp(2rem,10vw,3rem);line-height:1.05;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.qtext.smallq{font-size:clamp(1.5rem,7vw,2.1rem)}
+.answer{min-height:64px;border-radius:18px;border:3px dashed var(--line);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:2.2rem;font-variant-numeric:tabular-nums}
+.answer.ok{border-style:solid;border-color:var(--leaf);background:var(--right-bg);color:var(--leaf-d)}
+.answer.bad{border-style:solid;border-color:var(--wrong);background:var(--wrong-bg);color:var(--wrong)}
+.pad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pad button{height:62px;border-radius:18px;background:var(--card);border:2px solid var(--line);box-shadow:0 4px 0 var(--line);font-family:var(--display);font-weight:800;font-size:1.8rem}
+.pad button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.pad .go{background:var(--leaf);border-color:var(--leaf);color:#fff;box-shadow:0 4px 0 var(--leaf-d)}
+.pad .del{font-size:1.2rem}
+.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.choices button{min-height:66px;border-radius:18px;background:var(--card);border:2px solid var(--line);box-shadow:0 4px 0 var(--line);font-family:var(--display);font-weight:800;font-size:1.45rem;padding:6px}
+.choices button.ok{background:var(--right-bg);border-color:var(--leaf)}
+.choices button.bad{background:var(--wrong-bg);border-color:var(--wrong)}
+.fb{border-radius:20px;padding:14px 16px;text-align:left;display:flex;flex-direction:column;gap:8px}
+.fb.ok{background:var(--right-bg)}
+.fb.bad{background:var(--wrong-bg)}
+.fb h3{font-size:1.3rem}
+.fb ol{margin:0;padding-left:22px;font-weight:700;display:flex;flex-direction:column;gap:3px}
+
+/* result */
+.result{background:var(--card);border:2px solid var(--line);border-radius:26px;padding:20px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
+.bigscore{font-family:var(--display);font-weight:800;font-size:3.4rem;line-height:1}
+.starrow{display:flex;gap:4px;flex-wrap:wrap;justify-content:center}
+.starrow svg{width:26px;height:26px}
+.gifts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.gift{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;min-height:210px;justify-content:center}
+.gift.rare{background:linear-gradient(160deg,#FFF6CF,#FFE38A);border-color:var(--gold)}
+.gift .box{width:110px;height:110px}
+.gift .box svg{width:100%;height:100%}
+.gift.closed .box{animation:wiggle 1.4s ease-in-out infinite}
+.gift .lbl{font-family:var(--display);font-weight:800;font-size:1.05rem;line-height:1.15}
+.gift .sub{font-size:.82rem;color:var(--muted);font-weight:700}
+.gift .prev{width:120px}
+.gift.wide{grid-column:1 / -1;min-height:0;flex-direction:row;justify-content:flex-start;text-align:left;gap:12px;padding:12px 16px}
+@keyframes wiggle{0%,100%{transform:rotate(0)}20%{transform:rotate(-7deg)}40%{transform:rotate(6deg)}60%{transform:rotate(-3deg)}}
+.pop{animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
+@keyframes pop{from{transform:scale(.4);opacity:.2}to{transform:scale(1);opacity:1}}
+
+/* wardrobe */
+.wardgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.item{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
+.item svg{width:100%;max-width:90px;height:auto}
+.item .nm{font-weight:800;font-size:.78rem;line-height:1.15}
+.item.on{border-color:var(--leaf);background:var(--right-bg)}
+.item.rare.on{border-color:var(--gold);background:#FFF3C4}
+.item.locked{border-style:dashed;background:transparent;cursor:default}
+.item.locked .q{width:64px;height:78px;border-radius:14px;background:var(--mat);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:2rem;color:var(--muted)}
+.item .how{font-size:.7rem;color:var(--muted);font-weight:700}
+.swatches{display:flex;flex-wrap:wrap;gap:10px}
+.sw{width:48px;height:48px;border-radius:14px;border:3px solid var(--line)}
+.sw.on{border-color:var(--ink);box-shadow:0 0 0 3px var(--card) inset}
+.sw.locked{opacity:.35;border-style:dashed;cursor:default}
+.namebox{display:flex;gap:8px;align-items:center}
+.namebox input{flex:1;min-width:0;height:48px;border-radius:14px;border:2px solid var(--line);padding:0 12px;font:inherit;font-weight:800;background:var(--card);color:var(--ink)}
+.panel{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.danger{color:var(--wrong);font-weight:800;text-decoration:underline;align-self:flex-start}
+.note{font-size:.88rem;color:var(--muted);font-weight:700}
+/* speed */
+.bi{width:1.1em;height:1.1em;vertical-align:-.18em;margin-right:4px}
+.modes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.records.onpage div{background:var(--card);border:2px solid var(--line)}
+.mode{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:var(--card);border:2px solid var(--line);border-radius:20px;padding:12px 14px;box-shadow:0 4px 0 var(--line)}
+.mode b{font-family:var(--display);font-weight:800;font-size:1.2rem;line-height:1.1}
+.mode span{font-size:.85rem;color:var(--muted);font-weight:700}
+.mode:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.mode.ta{grid-column:1 / -1;background:var(--ink);border-color:var(--ink);color:#fff;box-shadow:0 4px 0 #0E1530}
+.mode.ta span{color:#C9D2EE}
+.records{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;width:100%}
+.records div{background:var(--bg);border-radius:14px;padding:8px 10px;display:flex;flex-direction:column;text-align:left}
+.records span{font-size:.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.records b{font-family:var(--display);font-size:1.3rem;font-variant-numeric:tabular-nums}
+.clock{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;text-align:left}
+.ctrack{grid-column:1 / -1;height:12px;border-radius:999px;background:var(--mat);overflow:hidden}
+.ctrack b{display:block;height:100%;border-radius:999px;transition:width .1s linear,background .2s}
+.clock.z3 .ctrack b{background:var(--leaf)} .clock.z2 .ctrack b{background:var(--gold)} .clock.z1 .ctrack b{background:var(--line)}
+.ctime{font-weight:800;font-variant-numeric:tabular-nums;color:var(--muted)}
+.czone{font-weight:800;font-size:.9rem;padding:2px 10px;border-radius:999px}
+.clock.z3 .czone{background:var(--right-bg);color:var(--leaf-d)} .clock.z2 .czone{background:#FFF1C2;color:#8A5E00} .clock.z1 .czone{background:var(--mat);color:var(--muted)}
+.prog.tap b{background:var(--accent);transition:width .1s linear}
+.tatime{font-family:var(--display);font-weight:800;font-size:1.8rem;min-width:2ch;text-align:center;font-variant-numeric:tabular-nums}
+.tatime.hurry{color:var(--wrong);animation:pulse .5s ease-in-out infinite alternate}
+@keyframes pulse{to{transform:scale(1.15)}}
+.fb.sp3{background:linear-gradient(120deg,#DDF5E8,#FFF3C4)}
+.gift.speed{background:linear-gradient(160deg,#E3EEFF,#BFD7FF);border-color:#2F80ED}
+.item.spd.on{border-color:#2F80ED;background:#E3EEFF}
+.exbtns{display:flex;gap:10px;flex-wrap:wrap}
+.mstage.practice{border-color:var(--leaf);box-shadow:0 4px 0 var(--leaf-d);background:#EAF7EF}
+.mstage.practice .sn,.mstage.practice .sg{background:var(--leaf);color:#fff}
+#pcode{width:100%;border:2px solid var(--line);border-radius:12px;padding:8px 10px;font:inherit;font-size:.8rem;background:var(--card);color:var(--ink);resize:vertical;word-break:break-all}
+.testrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-top:2px dashed var(--line);padding-top:14px}
+.rules{display:flex;flex-direction:column;gap:10px}
+.rok,.rno{border-radius:14px;padding:10px 12px}
+.rok{background:var(--right-bg)}
+.rno{background:var(--wrong-bg)}
+.rok b{color:var(--leaf-d)}
+.rno b{color:var(--wrong)}
+.rules ul{margin:6px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:5px}
+.testbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#FFF1C2;border:2px dashed var(--gold-d);border-radius:16px;padding:10px 12px;font-weight:700;font-size:.92rem}
+/* all sutras + hero lab */
+.qtext,.exq{white-space:pre-line}
+.path .phase{list-style:none;font-family:var(--display);font-weight:800;font-size:1.05rem;color:var(--muted);padding:12px 4px 0;position:relative;z-index:1;background:var(--bg)}
+.power{display:flex;flex-direction:column;gap:4px;font-size:.85rem}
+.ptop{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.ptop span{font-weight:800;color:var(--accent-d)}
+.pbar{height:12px;background:var(--mat);border-radius:999px;overflow:hidden}
+.pbar b{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:999px}
+.power small{color:var(--muted);font-weight:700}
+.item .pw,.food .pw{font-size:.72rem;font-weight:800;color:var(--accent-d)}
+.sub2{display:flex;flex-direction:column;gap:6px}
+.spcgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.spc{background:var(--bg);border:2px solid var(--line);border-radius:16px;padding:4px 2px;display:flex;flex-direction:column;align-items:center;font-weight:800;font-size:.75rem}
+.spc svg{width:100%;max-width:70px;height:auto}
+.spc.on{border-color:var(--accent);background:#FFF1E6}
+.spc[disabled]{opacity:.45;cursor:default}
+.foods{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.food{background:var(--bg);border-radius:16px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center}
+.ficon svg{width:44px;height:44px;display:block}
+.fn{font-weight:800;font-size:.8rem;line-height:1.1}
+.food .btn{min-height:34px;padding:0 12px;font-size:1rem;gap:4px}
+.food .btn svg{width:16px;height:16px}
+.yumbar{background:#D3F9D8;border:2px solid var(--leaf);border-radius:16px;padding:10px 14px;font-weight:700}
+.stage.yum svg{animation:bounce .6s ease}
+@keyframes bounce{30%{transform:translateY(-12px) scale(1.04)}60%{transform:translateY(0)}}
+/* story pictures + missions */
+.scenewrap{border-radius:18px;overflow:hidden;line-height:0;width:100%}
+.scene{width:100%;height:auto;display:block}
+.scene text{font-family:var(--display);font-weight:800}
+.fbpic{max-width:300px;width:100%;align-self:center}
+.herobtns{display:flex;flex-direction:column;gap:8px}
+.stages{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.mstage{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:12px;align-items:center;width:100%;text-align:left;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:10px 12px;box-shadow:0 4px 0 var(--line)}
+.mstage .sn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:1.2rem;background:var(--mat);color:var(--muted)}
+.mstage .sx b{display:block;font-family:var(--display);font-size:1.15rem;line-height:1.15}
+.mstage .sx small{font-weight:700;color:var(--muted);font-size:.82rem}
+.mstage .sg{font-weight:800;font-size:.8rem;padding:3px 10px;border-radius:999px;background:var(--mat)}
+.mstage.cur{border-color:var(--accent);box-shadow:0 4px 0 var(--accent-d)}
+.mstage.cur .sn,.mstage.cur .sg{background:var(--accent);color:#fff}
+.mstage.done{border-color:#A9DCC2;box-shadow:0 4px 0 #A9DCC2}
+.mstage.done .sn{background:var(--leaf);color:#fff}
+.mstage.done .sg{background:var(--right-bg);color:var(--leaf-d)}
+.mstage.lock{opacity:.55;box-shadow:none;border-style:dashed;cursor:default}
+.mstage.ta.cur{background:var(--ink);color:#fff;border-color:var(--ink);box-shadow:0 4px 0 #0E1530}
+.mstage.ta.cur small{color:#C9D2EE}
+.mstage:not(.lock):active{transform:translateY(3px)}
+.passpill{font-weight:800;font-size:.85rem;padding:3px 12px;border-radius:999px}
+.passpill.ok{background:var(--right-bg);color:var(--leaf-d)}
+.passpill.no{background:var(--wrong-bg);color:var(--wrong)}
+.cardlist{display:flex;flex-direction:column;gap:14px}
+.scard{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:10px;display:flex;flex-direction:column;gap:10px}
+.scap{display:flex;gap:10px;align-items:flex-start}
+.scap .disc{flex:none;margin:0}
+.scap b{font-family:var(--display);font-size:1.2rem}
+.skid{font-weight:800;margin-top:2px}
+.scard.locked{border-style:dashed;background:transparent}
+.lockbox{min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center}
+.gift.sutracard{grid-column:1 / -1;min-height:0}
+canvas#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<main class="app" id="app"></main>
+
+<script>
+/* ---------- data ---------- */
+const BELTS=[{n:'White',c:'#F7F7F0'},{n:'Yellow',c:'#FFD60A'},{n:'Orange',c:'#FF8C1A'},{n:'Green',c:'#2BA84A'},{n:'Blue',c:'#2F6FDE'},{n:'Brown',c:'#8B5A2B'},{n:'Black',c:'#16161D'}];
+const GIS=[{n:'Snow',c:'#FFFFFF',d:'#C3CAD8'},{n:'Sky',c:'#9FDBFF',d:'#58A9D6'},{n:'Cherry',c:'#FF8585',d:'#CC4D52'},{n:'Grape',c:'#BEA2F7',d:'#8467C9'},{n:'Mint',c:'#8BE0B4',d:'#46A877'},{n:'Sunny',c:'#FFD36B',d:'#D3A033'},{n:'Midnight',c:'#36406A',d:'#6A74A8'}];
+const ITEMS={
+  headband:{n:'Red Headband'}, sneakers:{n:'Speedy Sneakers',slot:'feet'}, sunglasses:{n:'Cool Shades',slot:'eyes'},
+  wristbands:{n:'Power Wristbands'}, scarf:{n:'Ninja Scarf'}, cap:{n:'Blue Cap',slot:'hat'},
+  backpack:{n:'Maths Backpack',slot:'back'}, staff:{n:'Bamboo Staff',slot:'weapon',pw:10,kind:'weapon'}, bowtie:{n:'Fancy Bow Tie'},
+  badge:{n:'Star Badge'}, mask:{n:'Ninja Mask'}, cape:{n:'Hero Cape',slot:'cape'},
+  crown:{n:'Golden Crown',slot:'hat',rare:1}, dragon:{n:'Baby Dragon',rare:1}, wand:{n:'Star Wand',rare:1,slot:'weapon',pw:20,kind:'weapon'},
+  rainbow:{n:'Rainbow Cape',slot:'cape',rare:1}, medal:{n:'Champion Medal',rare:1}, aura:{n:'Golden Glow',rare:1},
+  goggles:{n:'Racing Goggles',slot:'eyes',speed:1}, bolt:{n:'Lightning Bolt',speed:1},
+  boots:{n:'Flame Boots',slot:'feet',speed:1}, jetpack:{n:'Rocket Jetpack',slot:'back',speed:1},
+  sword:{n:'Hero Sword',slot:'weapon',pw:12,kind:'weapon'}, shield:{n:'Star Shield',slot:'left',pw:12,kind:'weapon'}, bow:{n:'Bow and Arrow',slot:'left',pw:12,kind:'weapon'},
+  hammer:{n:'Thunder Hammer',slot:'weapon',pw:18,kind:'weapon'}, spear:{n:'Ice Spear',slot:'weapon',pw:15,kind:'weapon'},
+  helmet:{n:'Knight Helmet',slot:'hat',pw:10}, armor:{n:'Gold Armour',slot:'body',pw:15}, wings:{n:'Power Wings',slot:'back',pw:15}
+};
+const REG=['headband','sword','sneakers','shield','sunglasses','bow','wristbands','helmet','scarf','hammer','cap','armor','backpack','spear','bowtie','wings','badge','mask','cape','staff'];
+const RARE=['crown','dragon','wand','rainbow','medal','aura'];
+const SPEED=['goggles','bolt','boots','jetpack'];
+/* seconds for a "lightning" answer, per unit (plus half a second per answer digit); "quick" is double */
+const BASE=[4,5,5,5,7,5,6,14,6,9];
+const limitOf=(q,u)=>BASE[u]+(q.choices?1:String(q.a).length)*.5;
+const speedOf=(q,u,t)=>{const l=limitOf(q,u);return t<=l?3:t<=l*2?2:1};
+const SPEEDNAME={3:'Lightning',2:'Quick',1:'Steady'};
+/* four missions per sutra, passed in order */
+const STAGES=[{k:'q',n:'Quick',mode:'10',sub:'10 questions'},{k:'t',n:'Training',mode:'20',sub:'20 questions'},{k:'m',n:'Master',mode:'30',sub:'30 questions'},{k:'ta',n:'Lightning Round',mode:'ta',sub:'60 seconds'}];
+const taTarget=u=>Math.max(3,Math.round(60/(BASE[u]*1.5)));
+const needOf=(u,mode)=>mode==='10'?7:mode==='20'?14:mode==='30'?24:taTarget(u);
+const stageOf=mode=>STAGES.find(s=>s.mode===String(mode));
+
+/* ---------- helpers ---------- */
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const p2=n=>String(n).padStart(2,'0');
+const ds=n=>String(n).split('').reduce((a,b)=>a+ +b,0);
+const dr=n=>{let s=n;while(s>9)s=ds(s);return s===9?0:s};
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const ex=(q,steps,a)=>`<div class="ex"><div class="exq">${q}</div><ol>${steps.map(s=>`<li>${s}</li>`).join('')}</ol>${a?`<div class="exa">${a}</div>`:''}</div>`;
+
+/* ---------- question makers ---------- */
+const G=[];
+G[0]=()=>{const t=ri(0,3);
+  if(t===3){const a=ri(1,9);let b;do{b=ri(2,9)}while(b===a||b===10-a);return{q:`${a} + ${b} + ${10-a}`,a:10+b,steps:[`Find the Ten Friends: ${a} + ${10-a} = 10.`,`10 + ${b} = ${10+b}`]}}
+  if(t===0){const a=ri(6,9),n=10-a,b=ri(n+1,9);return{q:`${a} + ${b}`,a:a+b,steps:[`${a} needs ${n} to make 10.`,`${b} gives ${n} and keeps ${b-n}.`,`10 + ${b-n} = ${a+b}`]}}
+  if(t===1){const x=ri(1,8)*10+ri(5,9),n=10-x%10,b=ri(n+1,9);return{q:`${x} + ${b}`,a:x+b,steps:[`${x} needs ${n} to make ${x+n}.`,`${b} gives ${n} and keeps ${b-n}.`,`${x+n} + ${b-n} = ${x+b}`]}}
+  const x=ri(1,6)*10+ri(6,9),n=10-x%10,y=ri(1,3)*10+ri(n,9);return{q:`${x} + ${y}`,a:x+y,steps:[`${x} needs ${n} to make ${x+n}.`,`${y} gives ${n} and becomes ${y-n}.`,`${x+n} + ${y-n} = ${x+y}`]}};
+G[1]=()=>{const t=ri(0,5);
+  if(t===0){const n=ri(12,89);return{q:`${n} + 9`,a:n+9,steps:[`9 is a 10 in disguise: ${n} + 10 = ${n+10}.`,`Take the missing 1 away: ${n+10} − 1 = ${n+9}.`]}}
+  if(t===1){const n=ri(20,99);return{q:`${n} − 9`,a:n-9,steps:[`${n} − 10 = ${n-10}.`,`We took 1 too many, give it back: ${n-10} + 1 = ${n-9}.`]}}
+  if(t===2){const n=ri(12,89);return{q:`${n} + 8`,a:n+8,steps:[`${n} + 10 = ${n+10}.`,`8 is missing 2 buttons: ${n+10} − 2 = ${n+8}.`]}}
+  if(t===3){const n=ri(20,99);return{q:`${n} − 8`,a:n-8,steps:[`${n} − 10 = ${n-10}.`,`Give 2 back: ${n-10} + 2 = ${n-8}.`]}}
+  if(t===4){const n=ri(101,899);return{q:`${n} + 99`,a:n+99,steps:[`99 is 100 in disguise: ${n} + 100 = ${n+100}.`,`Take 1 away: ${n+99}.`]}}
+  const n=ri(150,999);return{q:`${n} − 99`,a:n-99,steps:[`${n} − 100 = ${n-100}.`,`Give 1 back: ${n-99}.`]}};
+G[2]=()=>{const t=ri(0,5);
+  if(t===5){let n;do{n=ri(1001,9989)}while(n%10===0);const d=String(n).split('').map(Number);return{q:`10000 − ${n}`,a:10000-n,steps:[`All from 9: ${9-d[0]}, ${9-d[1]}, ${9-d[2]}.`,`Last from 10: 10 − ${d[3]} = ${10-d[3]}.`,`Answer: ${10000-n}`]}}
+  if(t<=1){let n;do{n=ri(11,98)}while(n%10===0);const a=Math.floor(n/10),b=n%10;return{q:`100 − ${n}`,a:100-n,steps:[`All from 9: 9 − ${a} = ${9-a}.`,`Last from 10: 10 − ${b} = ${10-b}.`,`Answer: ${100-n}`]}}
+  if(t<=3){let n;do{n=ri(101,989)}while(n%10===0);const d=String(n).split('').map(Number);return{q:`1000 − ${n}`,a:1000-n,steps:[`9 − ${d[0]} = ${9-d[0]}`,`9 − ${d[1]} = ${9-d[1]}`,`Last from 10: 10 − ${d[2]} = ${10-d[2]}`,`Answer: ${1000-n}`]}}
+  const n=ri(1,9);return{q:`100 − ${n}`,a:100-n,steps:[`Think of ${n} as 0${n}.`,`9 − 0 = 9 and 10 − ${n} = ${10-n}.`,`Answer: ${100-n}`]}};
+G[3]=()=>{const t=ri(0,5);
+  if(t===5){const n=ri(2,9);return{q:`${n} × 99`,a:n*99,steps:[`Left twin: ${n} − 1 = ${n-1}.`,`Right twin: 99 − ${n-1} = ${99-n+1}.`,`Join: ${n*99}`]}}
+  if(t===0){const n=ri(2,9);return{q:`${n} × 9`,a:n*9,steps:[`Left twin: one less than ${n} is ${n-1}.`,`Right twin: ${n-1} needs ${10-n} to reach 9.`,`Join the twins: ${n*9}`]}}
+  if(t<=3){const n=ri(11,98),l=n-1,r=99-l;return{q:`${n} × 99`,a:n*99,steps:[`Left twin: ${n} − 1 = ${l}.`,`Right twin: 99 − ${l} = ${p2(r)}.`,`Join: ${n*99}`]}}
+  const n=ri(101,998),l=n-1,r=999-l;return{q:`${n} × 999`,a:n*999,steps:[`Left twin: ${n} − 1 = ${l}.`,`Right twin: 999 − ${l} = ${String(r).padStart(3,'0')}.`,`Join: ${n*999}`]}};
+G[4]=()=>{const t=ri(0,3);let a,b,s=[],c,p;
+  if(t===0){a=ri(6,9);b=ri(6,9);const da=10-a,db=10-b;c=a-db;p=da*db;s=[`Steps from 10: ${a} is ${da} below, ${b} is ${db} below.`,`Cross: ${a} − ${db} = ${c}.`,`Down: ${da} × ${db} = ${p}.`];
+    if(p>=10)s.push(`${p} is too big for one place: the ${Math.floor(p/10)} jumps left → ${c+Math.floor(p/10)} and ${p%10}.`)}
+  else if(t===1){a=ri(11,15);b=ri(11,15);const da=a-10,db=b-10;c=a+db;p=da*db;s=[`Steps above 10: ${da} and ${db}.`,`Cross: ${a} + ${db} = ${c}.`,`Down: ${da} × ${db} = ${p}.`];
+    if(p>=10)s.push(`The ${Math.floor(p/10)} jumps left → ${c+Math.floor(p/10)} and ${p%10}.`)}
+  else if(t===2){a=ri(91,99);b=ri(91,99);const da=100-a,db=100-b;c=a-db;p=da*db;s=[`Steps from 100: ${da} and ${db} below.`,`Cross: ${a} − ${db} = ${c}.`,`Down: ${da} × ${db} = ${p2(p)} (always two digits).`]}
+  else{a=ri(101,109);b=ri(101,109);const da=a-100,db=b-100;c=a+db;p=da*db;s=[`Steps above 100: ${da} and ${db}.`,`Cross: ${a} + ${db} = ${c}.`,`Down: ${da} × ${db} = ${p2(p)} (always two digits).`]}
+  s.push(`Answer: ${a*b}`);return{q:`${a} × ${b}`,a:a*b,steps:s}};
+G[5]=()=>{if(ri(0,3)<3){const n=ri(12,99),t=Math.floor(n/10),u=n%10,f=t+u,s=[`Bread: ${t} and ${u}.`,`Filling: ${t} + ${u} = ${f}.`];
+    if(f>=10)s.push(`Too much filling! Keep ${f%10} in the middle, the 1 squeezes into the left bread: ${t+1}.`);s.push(`Answer: ${n*11}`);return{q:`${n} × 11`,a:n*11,steps:s}}
+  let a,b,c;do{a=ri(1,8);b=ri(0,8);c=ri(0,8)}while(a+b>9||b+c>9);const n=a*100+b*10+c;
+  return{q:`${n} × 11`,a:n*11,steps:[`Bread: ${a} and ${c}.`,`Fillings: ${a} + ${b} = ${a+b} and ${b} + ${c} = ${b+c}.`,`Answer: ${n*11}`]}};
+G[6]=()=>{const t=ri(0,4);if(t===4){const n=ri(10,12),m=n*10+5;return{q:`${m} × ${m}`,a:m*m,steps:[`The front is ${n}. It takes the One-More Lift to ${n+1}.`,`${n} × ${n+1} = ${n*(n+1)}.`,`Stick 25 on the end: ${m*m}`]}}
+  if(t<3){const n=ri(1,9),m=n*10+5;return{q:`${m} × ${m}`,a:m*m,steps:[`Front digit ${n} takes the One-More Lift to ${n+1}.`,`${n} × ${n+1} = ${n*(n+1)}.`,`Stick 25 on the end: ${m*m}`]}}
+  const f=ri(1,9),u=ri(1,9),x=f*10+u,y=f*10+10-u;
+  return{q:`${x} × ${y}`,a:x*y,steps:[`Same front ${f}, backs ${u} + ${10-u} = 10.`,`Front: ${f} × ${f+1} = ${f*(f+1)}.`,`Back: ${u} × ${10-u} = ${p2(u*(10-u))}.`,`Answer: ${x*y}`]}};
+G[7]=()=>{const easy=ri(0,1)===0,g=()=>easy?ri(1,3)*10+ri(1,4):ri(12,98);let x=g(),y=g();if(x%10===0)x++;if(y%10===0)y++;
+  const t1=Math.floor(x/10),u1=x%10,t2=Math.floor(y/10),u2=y%10,r=u1*u2,c1=Math.floor(r/10),m=t1*u2+u1*t2+c1,c2=Math.floor(m/10),l=t1*t2+c2;
+  return{q:`${x} × ${y}`,a:x*y,steps:[`Down right: ${u1} × ${u2} = ${r} → write ${r%10}${c1?`, pass ${c1}`:''}.`,`Cross: ${t1}×${u2} + ${u1}×${t2}${c1?` + ${c1}`:''} = ${m} → write ${m%10}${c2?`, pass ${c2}`:''}.`,`Down left: ${t1} × ${t2}${c2?` + ${c2}`:''} = ${l}.`,`Answer: ${x*y}`]}};
+G[8]=()=>{const r=ri(0,5),t=r<=1?0:r===2?1:r<=4?2:3;
+  if(t===0){const n=ri(12,9999),st=[];let s=n;while(s>9){const d=String(s).split(''),v=ds(s);st.push(`${d.join(' + ')} = ${v}`);s=v}
+    if(s===9)st.push('9 counts as 0.');st.push(`Magic number: ${dr(n)}`);return{q:`Magic number of ${n}?`,a:dr(n),steps:st,smallq:1}}
+  if(t===1){const n=ri(10,89),q=Math.floor(n/9),r=n%9,f=Math.floor(n/10),s=f+n%10,ans=`${q} r ${r}`,st=[`Answer part: first digit ${f}. Leftover: ${f} + ${n%10} = ${s}.`];
+    if(s>=9)st.push(`${s} is 9 or more, so one more 9 comes out: ${f+1} r ${s-9}.`);st.push(`Answer: ${ans}`);
+    const set=new Set([ans]);const opts=[s>=9?`${f} r ${s}`:`${q} r ${(r+1)%9}`,`${q+1} r ${r}`,`${Math.max(0,q-1)} r ${(r+2)%9}`,`${q} r ${(r+3)%9}`];
+    for(const o of opts){if(set.size<4)set.add(o)}return{q:`${n} ÷ 9`,a:ans,choices:shuffle([...set]),steps:st}}
+  const mul=t===3,a=mul?ri(11,49):ri(15,89),b=mul?ri(2,9):ri(12,89),c=mul?a*b:a+b,wrong=ri(0,1)===1,shown=wrong?c+pick([1,-1,10,-10]):c;
+  const ma=dr(a),mb=dr(b),mm=mul?dr(ma*mb):dr(ma+mb),ms=dr(shown);
+  return{q:`Is ${a} ${mul?'×':'+'} ${b} = ${shown} right?`,smallq:1,a:wrong?'Wrong':'Right',choices:['Right','Wrong'],steps:[`Magic numbers: ${a} → ${ma}, ${b} → ${mb}, ${shown} → ${ms}.`,`Little sum: ${ma} ${mul?'×':'+'} ${mb} = ${mul?ma*mb:ma+mb}${(mul?ma*mb:ma+mb)!==mm?` → ${mm}`:''}.`,wrong?`${mm} is not ${ms}. No match, so it's a mistake! The real answer is ${c}.`:`${mm} and ${ms} match, so it's right!`]}};
+G[9]=()=>pick(G.slice(0,9))();
+
+/* ---------- units ---------- */
+const OLDU=[
+ {t:'Make-a-Ten Magic',s:'Pūraṇāpūraṇābhyām · by completing',kid:'Numbers are happiest when they make 10.',col:'#FF7A2F',belt:0,cards:[
+  {h:'Welcome to Ten Town',b:`<p>In Ten Town, every number has a best friend. Together they make exactly 10.</p><div class="chips"><span class="chip">1 + 9</span><span class="chip">2 + 8</span><span class="chip">3 + 7</span><span class="chip">4 + 6</span><span class="chip">5 + 5</span></div><p class="tip">Finger game: show 3 fingers. How many are missing to make 10? (7!)</p>`},
+  {h:'Borrow to make ten',b:ex('8 + 7',['8 needs 2 to make 10.','7 gives 2. It keeps 5.','10 + 5 = 15'],'= 15')+`<p class="tip">Chant it: "8 needs 2, 7 gives 2, 10 and 5 is 15!"</p>`},
+  {h:'Bigger numbers',b:ex('38 + 5',['38 wants to be 40. It needs 2.','5 gives 2 and keeps 3.','40 + 3 = 43'],'= 43')+ex('28 + 47',['28 needs 2 to make 30.','47 gives 2 and becomes 45.','30 + 45 = 75'],'= 75')},
+  {h:'Friend hunt',b:ex('7 + 4 + 3 + 6 + 5',['Find friends: 7 + 3 and 4 + 6.','That is 10 + 10 = 20.','Add the 5 left over.'],'= 25')}]},
+ {t:'Nine in Disguise',s:'Pūraṇāpūraṇābhyām · completing to 10 and 100',kid:'9 is a 10 wearing a mask. Add 10, then fix the mask.',col:'#2F80ED',belt:1,cards:[
+  {h:'Meet Captain Nine',b:`<p>Captain Nine is a spy. He dresses up as a 10, but his costume is missing one button.</p><p>So when Captain Nine joins a sum: add 10, then take away 1.</p>`},
+  {h:'Adding 9',b:ex('47 + 9',['Pretend 9 is 10: 47 + 10 = 57.','Take the missing 1 away.'],'= 56')+`<p class="tip">Pattern: tens go up 1, ones go down 1. 47 → 56.</p>`},
+  {h:'Taking away 9',b:ex('53 − 9',['53 − 10 = 43.','We took 1 too many. Give it back.'],'= 44')},
+  {h:'Captain 8 and Captain 99',b:ex('36 + 8',['36 + 10 = 46.','8 is missing 2: 46 − 2.'],'= 44')+ex('245 + 99',['245 + 100 = 345.','Take 1 away.'],'= 344')}]},
+ {t:'All from 9, Last from 10',s:'Nikhilam Navataścaramaṃ Daśataḥ',kid:'Every digit goes to 9. The last digit goes to 10.',col:'#13A89E',belt:0,cards:[
+  {h:'The Nine-Nine-Ten Machine',b:`<p>Feed the magic machine a number. It tells you what that number needs to reach 100 or 1000.</p><p>No borrowing. No crossing out. Just: <b>all from 9, the last from 10</b>.</p>`},
+  {h:'Taking away from 100',b:ex('100 − 37',['3 goes to 9: 9 − 3 = 6.','7 goes to 10: 10 − 7 = 3.'],'= 63')+`<p class="tip">Check: 37 + 63 = 100. Yes!</p>`},
+  {h:'Taking away from 1000',b:ex('1000 − 456',['4 to 9 → 5','5 to 9 → 4','6 to 10 → 4'],'= 544')},
+  {h:'Short numbers',b:ex('100 − 7',['Think of 7 as 07.','0 to 9 → 9. 7 to 10 → 3.'],'= 93')+ex('1000 − 57',['Think of 057.','9, 4, 3'],'= 943')}]},
+ {t:'The Nines Twins',s:'Ekanyūnena Pūrveṇa · one less than the one before',kid:'Take one away, then fill up to the nines.',col:'#9B5DE5',belt:2,cards:[
+  {h:'The twin family',b:ex('7 × 9',['Left twin: one less than 7 → 6.','Right twin: 6 needs 3 to reach 9.','Join the twins.'],'= 63')+`<p class="tip">Finger trick: hold up 10 fingers, fold down finger 7. Left of it: 6. Right of it: 3.</p>`},
+  {h:'Times 99',b:ex('23 × 99',['Left twin: 23 − 1 = 22.','Right twin: 22 needs 77 to reach 99.','Join them.'],'= 2277')+ex('57 × 99',['56','43'],'= 5643')},
+  {h:'Times 999',b:ex('456 × 999',['Left twin: 455.','Right twin: 999 − 455 = 544.'],'= 455 544')+`<p class="tip">A six-digit answer in your head. Show it off at dinner!</p>`}]},
+ {t:'The Magic Cross',s:'Nikhilam · multiplying near 10 and 100',kid:'How far from home? Cross over, then multiply the steps.',col:'#E0445A',belt:3,cards:[
+  {h:'Home base 10',b:`<pre class="lay"> 8  −2
+ 7  −3
+──────
+ 5 | 6</pre><ol><li><b>Cross:</b> 8 − 3 = 5 (or 7 − 2, the same!)</li><li><b>Down:</b> 2 × 3 = 6</li></ol><div class="exa">8 × 7 = 56</div>`},
+  {h:'The jump-over',b:ex('7 × 6',['Steps: 3 and 4.','Cross: 7 − 4 = 3.','Down: 3 × 4 = 12. Too big!','The 1 jumps left: 3 + 1 = 4, keep 2.'],'= 42')},
+  {h:'Above 10',b:ex('12 × 13',['Steps above 10: 2 and 3.','Cross: 12 + 3 = 15.','Down: 2 × 3 = 6.'],'= 156')},
+  {h:'Home base 100',b:`<pre class="lay"> 98  −2
+ 97  −3
+───────
+ 95 | 06</pre><p>Near 100 the right side always has <b>two</b> digits.</p><div class="exa">98 × 97 = 9506</div>`}]},
+ {t:'The Eleven Sandwich',s:'A special case of Ūrdhva-Tiryagbhyām',kid:'Split the number. The sum goes in the middle like a sandwich.',col:'#F5A300',belt:0,cards:[
+  {h:'Simple sandwich',b:ex('23 × 11',['Bread: 2 and 3.','Filling: 2 + 3 = 5.','Sandwich: 2 5 3'],'= 253')},
+  {h:'Overstuffed sandwich',b:ex('78 × 11',['Bread: 7 and 8.','Filling: 7 + 8 = 15. Too much!','Keep 5. The 1 squeezes into the 7 → 8.'],'= 858')},
+  {h:'Club sandwich',b:ex('123 × 11',['Bread: 1 and 3.','Fillings: 1 + 2 = 3, 2 + 3 = 5.','1 3 5 3'],'= 1353')}]},
+ {t:'The Five Shortcut',s:'Ekādhikena Pūrveṇa · one more than the one before',kid:'Multiply the front by one more, then stick 25 on the end.',col:'#00A6D6',belt:4,cards:[
+  {h:'The One-More Lift',b:ex('35 × 35',['Front digit 3 takes the lift to 4.','3 × 4 = 12.','Stick 25 on the end.'],'= 1225')},
+  {h:'Try more',b:`<div class="chips"><span class="chip">25² → 2×3 = 6 → 625</span><span class="chip">45² → 4×5 = 20 → 2025</span><span class="chip">75² → 7×8 = 56 → 5625</span><span class="chip">105² → 10×11 → 11025</span></div>`},
+  {h:'Secret level',b:`<p>Same front digit, and the backs add up to 10? The lift works too!</p>`+ex('43 × 47',['Front: 4 × 5 = 20.','Back: 3 × 7 = 21.'],'= 2021')}]},
+ {t:'Lightning Ninja',s:'Ūrdhva-Tiryagbhyām · vertically and crosswise',kid:'Down, cross, down. Any 2-digit times 2-digit in one line.',col:'#2E9E6B',belt:5,cards:[
+  {h:'Three lightning moves',b:`<pre class="lay">Move 1   Move 2   Move 3
+  . |     . .     | .
+  . |      X      | .
+ right   cross    left</pre><p>Shout them: "Down! Cross! Down!"</p>`},
+  {h:'No carrying',b:ex('21 × 13',['Down right: 1 × 3 = 3.','Cross: 2×3 + 1×1 = 7.','Down left: 2 × 1 = 2.'],'= 273')},
+  {h:'Passing the ball',b:ex('34 × 26',['Down right: 4 × 6 = 24 → write 4, pass 2.','Cross: 3×6 + 4×2 = 26, + 2 = 28 → write 8, pass 2.','Down left: 3 × 2 = 6, + 2 = 8.'],'= 884')}]},
+ {t:'Magic Digit Check',s:'Navaśeṣa · what is left after nines',kid:'A detective trick to check if your answer is right.',col:'#7A4FC0',belt:0,cards:[
+  {h:'What is it for?',b:`<p>After you solve a sum, how do you know your answer is right?</p><p>Be a <b>maths detective</b>! Every number has a secret <b>magic number</b>. If the magic numbers agree, your answer is right. If they don't agree, you caught a mistake!</p><p class="tip">First we learn to find a magic number. Then we use it to check answers.</p>`},
+  {h:'Find the magic number',b:`<p>Add the digits together. Keep going until only <b>one digit</b> is left.</p>`+ex('23',['2 + 3 = 5','Only one digit is left. Stop!'],'magic number 5')+ex('58',['5 + 8 = 13. That is two digits, so keep going.','1 + 3 = 4'],'magic number 4')+ex('7',['It is already one digit!'],'magic number 7')},
+  {h:'Nines are invisible',b:`<p>The number 9 is a ghost. It counts as <b>0</b>, so you can skip it!</p>`+ex('49',['Skip the 9.','Only 4 is left.'],'magic number 4')+ex('18',['1 + 8 = 9','9 is invisible, so it counts as 0.'],'magic number 0')+`<p class="tip">Check the long way: 4 + 9 = 13, then 1 + 3 = 4. Same answer!</p>`},
+  {h:'Detective check: plus',b:()=>`<div class="scenewrap">${scCheck()}</div><p>Write the magic number under every number. They make their own <b>little sum</b>. If the little sum is true, the big sum is right.</p>`+ex('Is 21 + 14 = 35?',['Magic numbers: 21 → 3, 14 → 5, 35 → 8.','Little sum: 3 + 5 = 8. True!'],'Right! ✓')},
+  {h:'Catch a mistake',b:ex('Is 34 + 25 = 69?',['Magic numbers: 34 → 7, 25 → 7, 69 → 6.','Little sum: 7 + 7 = 14, and 14 → 5.','5 is not 6. No match!'],'Mistake! The real answer is 59.')+`<p class="tip">If the little sum makes a big number, find its magic number too.</p>`},
+  {h:'Check times sums too',b:ex('Is 12 × 3 = 36?',['Magic numbers: 12 → 3, 3 → 3, 36 → 9 → 0.','Little sum: 3 × 3 = 9 → 0.','0 and 0 match!'],'Right! ✓')+ex('Is 21 × 4 = 86?',['Magic numbers: 21 → 3, 4 → 4, 86 → 14 → 5.','Little sum: 3 × 4 = 12 → 3.','3 is not 5. No match!'],'Mistake! The real answer is 84.')},
+  {h:'Bonus: dividing by 9',b:`<p>Magic numbers also help when you divide by 9!</p>`+ex('23 ÷ 9',['The first digit is the answer: 2.','The magic number (2 + 3 = 5) is the leftover.'],'= 2 r 5')+ex('47 ÷ 9',['First digit 4. Leftover 4 + 7 = 11.','11 is 9 or more, so one more 9 fits: 5, and 11 − 9 = 2.'],'= 5 r 2')}]},
+ {t:'Black Belt Tournament',s:'All the sutras',kid:'Every trick, all mixed up. Pick the right one!',col:'#1F2A4D',belt:6,cards:[
+  {h:'The final challenge',b:`<p>This round mixes every trick you know. For each question, think: which sutra fits?</p><p>Get <b>8 or more</b> to win the Black Belt. Get all 10 for a special treasure.</p>`}]}
+];
+
+/* ---------- all 16 sutras + 13 upasutras ---------- */
+const OLDG=G.slice(),OLD_BASE=BASE.slice();
+const OLD_IDS=['ten','nine','allfrom9','twins','cross','eleven','five','lightning','magic','tour'];
+const DEF={};OLD_IDS.forEach((id,i)=>{DEF[id]=Object.assign(OLDU[i],{id,gen:OLDG[i],base:OLD_BASE[i]})});
+Object.assign(DEF.ten,{tag:'Sutra 8 · part 1'});
+Object.assign(DEF.nine,{tag:'Sutra 8 · part 2'});
+Object.assign(DEF.allfrom9,{tag:'Sutra 2 · part 1'});
+Object.assign(DEF.twins,{tag:'Sutra 14'});
+Object.assign(DEF.cross,{tag:'Sutra 2 · part 2'});
+Object.assign(DEF.eleven,{tag:'Sutra 3 · special case'});
+Object.assign(DEF.five,{tag:'Sutra 1'});
+Object.assign(DEF.lightning,{tag:'Sutra 3'});
+Object.assign(DEF.magic,{tag:'Sutra 15',s:'Guṇitasamuccayaḥ · the product of the sum is the sum of the product'});
+Object.assign(DEF.tour,{tag:'All 16 sutras and 13 upasutras',s:'Every trick, mixed together',kid:'Every trick, all mixed up. Pick the right one!',
+  cards:[{h:'The final challenge',b:`<p>This round mixes every sutra and upasutra you have learned. For each question, think: which trick fits?</p><p>Pass all 4 missions to win the <b>Black Belt</b>.</p>`}]});
+DEF.five.cards=DEF.five.cards.filter(c=>c.h!=='Secret level');
+DEF.five.gen=()=>{let q;do{q=OLDG[6]()}while(!/^\d*5 × \d*5$/.test(q.q));return q};
+const U=(id,tag,t,s,kid,col,base,gen,cards,story)=>{DEF[id]={id,tag,t,s,kid,col,base,gen,cards,story,belt:0}};
+const L=(n)=>String(n).padStart(3,'0');
+
+U('look','Upasutra 12','Look and See','Vilokanam · by mere observation','Some answers you can see just by looking.','#4DABF7',4,
+()=>{const t=ri(0,7),n=ri(12,999);
+  if(t===0)return{q:`${n} × 0`,a:0,steps:['Anything times 0 is 0.','Just look. No working needed!']};
+  if(t===1)return{q:`${n} × 1`,a:n,steps:['Times 1 keeps a number the same.',`So the answer is ${n}.`]};
+  if(t===2)return{q:`${n} − ${n}`,a:0,steps:['A number take away itself leaves nothing.','Answer: 0']};
+  if(t===3)return{q:`${n} + 0`,a:n,steps:['Adding 0 changes nothing.',`Answer: ${n}`]};
+  if(t===4){const k=ri(1,8);return{q:`${k}99 + 1`,a:(k+1)*100,steps:['99 + 1 makes the next hundred.',`${k}99 + 1 = ${(k+1)*100}`]}}
+  if(t===5){const k=ri(2,9);return{q:`${k}000 − 1`,a:k*1000-1,steps:['Taking 1 from thousands makes 9s.',`${k}000 − 1 = ${k*1000-1}`]}}
+  if(t===6){const m=ri(2,9),a=ri(12,99);return{q:`${a} + ${m} − ${m}`,a,steps:[`+ ${m} and − ${m} cancel each other.`,`Answer: ${a}`]}}
+  const k=ri(2,99);return{q:`${k}0 ÷ 10`,a:k,steps:['Dividing by 10 takes away the last 0.',`Answer: ${k}`]}},
+[{h:'Look before you work',b:`<p><b>Vilokanam</b> means "just by looking". Some sums are so easy that you can see the answer without any working.</p><div class="chips"><span class="chip">357 × 0 = 0</span><span class="chip">48 × 1 = 48</span><span class="chip">999 + 1 = 1000</span><span class="chip">25 − 25 = 0</span></div><p class="tip">Before every sum, look for one second. Is there a shortcut?</p>`},
+ {h:'Look-out rules',b:ex('6 × 0',['Times 0 is always 0.'],'= 0')+ex('299 + 1',['99 + 1 jumps to the next hundred.'],'= 300')+ex('5000 − 1',['One less than thousands ends in 9s.'],'= 4999')+ex('47 + 8 − 8',['+ 8 and − 8 cancel.'],'= 47')}],
+['The look-out owl','The look-out owl uses its telescope. Some answers you can see just by looking!']);
+
+U('parts','Sutra 11','Parts and Whole','Vyaṣṭisamaṣṭiḥ · part and whole','Split numbers into parts, then put the whole back together.','#FF922B',7,
+()=>{if(ri(0,3)===0){const w=ri(3,9)*10,p=ri(11,w-11);return{q:`${w} = ${p} + □`,a:w-p,steps:['Part + part = whole.',`Count up from ${p} to ${w}: ${p} + ${w-p} = ${w}.`,`□ = ${w-p}`]}}
+  const big=ri(0,3)===0,a=big?ri(110,480):ri(14,79),b=ri(12,69),at=a-a%10,bt=b-b%10,ao=a%10,bo=b%10;
+  return{q:`${a} + ${b}`,a:a+b,steps:[`Split into parts: ${a} = ${at} + ${ao}, ${b} = ${bt} + ${bo}.`,`Tens parts: ${at} + ${bt} = ${at+bt}.`,`Ones parts: ${ao} + ${bo} = ${ao+bo}.`,`Whole: ${at+bt} + ${ao+bo} = ${a+b}`]}},
+[{h:'Parts make a whole',b:`<p><b>Vyaṣṭisamaṣṭiḥ</b> means "part and whole". A big number is made of small parts: tens and ones.</p>`+ex('47',['47 is 40 + 7.'],'4 tens and 7 ones')+`<p class="tip">Splitting into parts makes hard sums easy.</p>`},
+ {h:'Add the parts',b:ex('47 + 38',['Split: 40 + 7 and 30 + 8.','Tens: 40 + 30 = 70.','Ones: 7 + 8 = 15.','Whole: 70 + 15 = 85.'],'= 85')+ex('125 + 34',['Split: 120 + 5 and 30 + 4.','Tens: 120 + 30 = 150.','Ones: 5 + 4 = 9.'],'= 159')},
+ {h:'Find the missing part',b:ex('50 = 18 + □',['Part + part = whole.','18 + 2 = 20, then 20 + 30 = 50.','2 + 30 = 32.'],'□ = 32')}],
+['The whole and its parts','47 splits into 40 and 7. 38 splits into 30 and 8. Join the tens, join the ones, and you have the whole: 85!']);
+
+U('bridge','Sutra 4','The Flip Bridge','Parāvartya Yojayet · flip and adjust','When a number crosses the = bridge, its sign flips.','#2E9E6B',6,
+()=>{const t=ri(0,3);
+  if(t===0){const x=ri(3,40),a=ri(2,30),c=x+a;return{q:`□ + ${a} = ${c}`,a:x,steps:[`Move ${a} across the = bridge.`,`Plus flips to minus: ${c} − ${a} = ${x}.`]}}
+  if(t===1){const x=ri(12,60),a=ri(2,11),c=x-a;return{q:`□ − ${a} = ${c}`,a:x,steps:[`Move ${a} across the = bridge.`,`Minus flips to plus: ${c} + ${a} = ${x}.`]}}
+  if(t===2){const x=ri(2,12),a=ri(2,10),c=x*a;return{q:`${a} × □ = ${c}`,a:x,steps:[`Move ${a} across the = bridge.`,`Times flips to divide: ${c} ÷ ${a} = ${x}.`]}}
+  const c=ri(2,10),a=ri(2,9);return{q:`□ ÷ ${a} = ${c}`,a:c*a,steps:[`Move ${a} across the = bridge.`,`Divide flips to times: ${c} × ${a} = ${c*a}.`]}},
+[{h:'The flip bridge',b:`<p><b>Parāvartya Yojayet</b> means "flip and adjust". The = sign is a bridge. When a number walks across the bridge, its sign flips over!</p><div class="chips"><span class="chip">+ becomes −</span><span class="chip">− becomes +</span><span class="chip">× becomes ÷</span><span class="chip">÷ becomes ×</span></div>`},
+ {h:'Find the hidden number',b:ex('□ + 7 = 15',['7 walks across the bridge.','+ 7 flips to − 7: 15 − 7 = 8.'],'□ = 8')+ex('□ − 5 = 9',['− 5 flips to + 5: 9 + 5 = 14.'],'□ = 14')},
+ {h:'Times and divide flip too',b:ex('3 × □ = 24',['× 3 flips to ÷ 3: 24 ÷ 3 = 8.'],'□ = 8')+ex('□ ÷ 4 = 6',['÷ 4 flips to × 4: 6 × 4 = 24.'],'□ = 24')+`<p class="tip">Check: put your answer in the box. Does the sum work?</p>`}],
+['The flip bridge','When 7 jumps across the = bridge, its plus flips into a minus. □ + 7 = 15 becomes □ = 15 − 7 = 8.']);
+
+U('cancel','Sutra 5','Same Cancels Out','Śūnyaṃ Sāmyasamuccaye · the same on both sides becomes zero','The same thing on both sides cancels to zero.','#E64980',6,
+()=>{const t=ri(0,3),a=ri(3,40),b=ri(2,30);
+  if(t===0)return{q:`${a} + ${b} = ${b} + □`,a,steps:[`${b} is on both sides. The same things cancel to zero!`,`What is left: □ = ${a}.`]};
+  if(t===1)return{q:`□ + ${b} = ${a} + ${b}`,a,steps:[`${b} is on both sides, so it cancels.`,`□ = ${a}`]};
+  if(t===2){const x=ri(2,12),y=ri(2,12);return{q:`${x} × ${y} = ${y} × □`,a:x,steps:[`× ${y} is on both sides, so it cancels.`,`□ = ${x}`]}}
+  const c=ri(2,20),d=ri(2,20),e=ri(2,20);return{q:`${c} + ${d} + ${e} = ${e} + ${c} + □`,a:d,steps:[`${c} and ${e} are on both sides. They cancel.`,`□ = ${d}`]}},
+[{h:'Same things cancel',b:`<p><b>Śūnyaṃ Sāmyasamuccaye</b> means "when the same thing is on both sides, it becomes zero". Think of a balance scale: the same weight on both pans cancels out.</p>`+ex('6 + 9 = □ + 9',['9 is on both sides. Cancel it!','6 = □'],'□ = 6')},
+ {h:'Bigger puzzles',b:ex('25 + 13 = 13 + □',['13 cancels.'],'□ = 25')+ex('4 + 7 + 9 = 9 + 4 + □',['4 and 9 cancel.'],'□ = 7')+ex('6 × 8 = 8 × □',['× 8 cancels.'],'□ = 6')+`<p class="tip">No adding needed. Just cross out the twins!</p>`}],
+['The balance scale','The two 9s sit on both sides of the scale. They cancel to zero. What is left? 6 on one side and □ on the other, so □ = 6.']);
+
+U('sumdiff','Sutra 7','Tall and Short Twins','Saṅkalana-vyavakalanābhyām · by adding and by taking away','Know the total and the difference? Add, take away, then halve.','#5C7CFA',14,
+()=>{const s=ri(1,12),d=ri(1,8),b=s+d,sum=b+s,big=ri(0,1)===0;
+  return{q:`Two numbers add to ${sum}.\nTheir difference is ${d}.\n${big?'Bigger':'Smaller'} number?`,smallq:1,a:big?b:s,steps:[`Bigger: add the total and the difference, then halve. (${sum} + ${d}) ÷ 2 = ${b}.`,`Smaller: take away instead. (${sum} − ${d}) ÷ 2 = ${s}.`,`Check: ${b} + ${s} = ${sum} and ${b} − ${s} = ${d}.`]}},
+[{h:'Add and take away',b:`<p><b>Saṅkalana-vyavakalanābhyām</b> means "by adding and by taking away". It finds two secret numbers when you know their total and their difference.</p>`+ex('Add to 10, difference 2',['Bigger: (10 + 2) ÷ 2 = 6.','Smaller: (10 − 2) ÷ 2 = 4.','Check: 6 + 4 = 10 and 6 − 4 = 2.'],'6 and 4')},
+ {h:'More secret pairs',b:ex('Add to 14, difference 4',['Bigger: (14 + 4) ÷ 2 = 9.','Smaller: (14 − 4) ÷ 2 = 5.'],'9 and 5')+ex('Add to 20, difference 6',['Bigger: 26 ÷ 2 = 13.','Smaller: 14 ÷ 2 = 7.'],'13 and 7')+`<p class="tip">Halving tip: half of 26 is half of 20 (10) plus half of 6 (3).</p>`}],
+['The tall and short twins','Together they make 14. The tall one is 4 more. (14 + 4) ÷ 2 = 9 is the tall one. (14 − 4) ÷ 2 = 5 is the short one.']);
+
+U('steps','Sutra 9','Pattern Steps','Calana-Kalanābhyām · by movement and change','Watch how the numbers move, then take the next step.','#12B886',8,
+()=>{const t=ri(0,3);
+  if(t<=1){const d=pick([2,3,4,5,6,10,11,25]),a=ri(1,30),up=t===0;const seq=[0,1,2,3].map(k=>up?a+k*d:a+(4-k)*d),nx=up?seq[3]+d:seq[3]-d;
+    return{q:`${seq.join(', ')}, ?`,a:nx,steps:[`Look at the change between neighbours: ${up?'+':'−'}${d} each time.`,`${seq[3]} ${up?'+':'−'} ${d} = ${nx}`]}}
+  if(t===2){const a=ri(1,6),seq=[a,a*2,a*4,a*8];return{q:`${seq.join(', ')}, ?`,a:a*16,steps:['Each number doubles (× 2).',`${a*8} × 2 = ${a*16}`]}}
+  const a=ri(1,10),seq=[a,a+1,a+3,a+6];return{q:`${seq.join(', ')}, ?`,a:a+10,steps:['The jumps grow: + 1, + 2, + 3 …','So the next jump is + 4.',`${a+6} + 4 = ${a+10}`]}},
+[{h:'Watch the change',b:`<p><b>Calana-Kalanābhyām</b> means "by movement and change". Grown-ups use it for very big maths. We use it to spot how numbers move.</p>`+ex('3, 7, 11, 15, ?',['Look between neighbours: + 4, + 4, + 4.','15 + 4 = 19.'],'19')},
+ {h:'Up, down and growing',b:ex('50, 45, 40, 35, ?',['Each step is − 5.'],'30')+ex('2, 4, 8, 16, ?',['Each number doubles.'],'32')+ex('1, 2, 4, 7, ?',['The jumps grow: + 1, + 2, + 3, so next is + 4.'],'11')}],
+['The stepping stones','The frog jumps + 4 on every stone: 3, 7, 11, 15. Where will it land next? 19!']);
+
+U('fruits','Upasutra 11','Fruit Puzzles','Lopanasthāpanābhyām · by hiding and keeping','Find one fruit, keep it, then hide it in the next line.','#F59F00',14,
+()=>{const [x,y]=shuffle(['🍎','🍌','🍇','🍓']).slice(0,2),vx=ri(2,9),vy=ri(1,9);
+  if(ri(0,1)===0)return{q:`${x} + ${x} = ${vx*2}\n${x} + ${y} = ${vx+vy}\n${y} = ?`,smallq:1,a:vy,steps:[`Line 1: ${x} + ${x} = ${vx*2}, so one ${x} = ${vx}.`,`Keep ${x} = ${vx} and put it in line 2: ${vx} + ${y} = ${vx+vy}.`,`${y} = ${vx+vy} − ${vx} = ${vy}`]};
+  return{q:`${x} + ${x} + ${x} = ${vx*3}\n${x} + ${y} = ${vx+vy}\n${y} = ?`,smallq:1,a:vy,steps:[`Line 1: three ${x} make ${vx*3}, so one ${x} = ${vx}.`,`Keep ${x} = ${vx} in line 2: ${vx} + ${y} = ${vx+vy}.`,`${y} = ${vy}`]}},
+[{h:'Hide one, keep one',b:`<p><b>Lopanasthāpanābhyām</b> means "by hiding and keeping". In a fruit puzzle, first find one fruit. Then keep its value and use it in the next line.</p>`+ex('🍎 + 🍎 = 10\n🍎 + 🍌 = 9\n🍌 = ?',['Line 1: two apples make 10, so 🍎 = 5.','Keep 🍎 = 5 in line 2: 5 + 🍌 = 9.'],'🍌 = 4')},
+ {h:'Three of a kind',b:ex('🍇 + 🍇 + 🍇 = 12\n🍇 + 🍓 = 10\n🍓 = ?',['Three grapes make 12, so 🍇 = 4.','4 + 🍓 = 10.'],'🍓 = 6')+`<p class="tip">Always start with the line that has only one kind of fruit.</p>`}],
+['The fruit puzzle','Two apples make 10, so one apple is 5. Keep the apple, use it in the next line, and the banana is easy: 4.']);
+
+U('zeros','Upasutra 3','Fronts and Zeros','Ādyamādyenantyamantyena · the first by the first, the last by the last','Multiply the fronts. The zeros join at the end.','#7950F2',6,
+()=>{const a=ri(2,9),b=ri(2,9),za=ri(1,2),zb=ri(0,2),A=a*10**za,B=b*10**zb,z=za+zb;
+  return{q:`${A} × ${B}`,a:A*B,steps:[`First by first: ${a} × ${b} = ${a*b}.`,`Last by last, the zeros: ${za} + ${zb} = ${z} zero${z>1?'s':''}.`,`Put them together: ${a*b} and ${'0'.repeat(z)} make ${A*B}`]}},
+[{h:'First by first, last by last',b:`<p><b>Ādyamādyenantyamantyena</b> means "the first by the first and the last by the last". Multiply the front digits. Then the zeros at the end join together.</p>`+ex('30 × 40',['First by first: 3 × 4 = 12.','Last by last: 1 zero + 1 zero = 2 zeros.'],'= 1200')},
+ {h:'More zeros',b:ex('200 × 3',['2 × 3 = 6.','Zeros: 2.'],'= 600')+ex('60 × 700',['6 × 7 = 42.','Zeros: 1 + 2 = 3.'],'= 42000')+ex('50 × 40',['5 × 4 = 20. It already has its own 0!','Then add the 2 zeros.'],'= 2000')}],
+['Fronts and zeros','3 and 4 shake hands to make 12. The zeros float like balloons to the end: 30 × 40 = 1200.']);
+
+U('split','Upasutra 10','Split and Multiply','Samuccayaguṇitaḥ · the sum of the products','Split a number, multiply each part, then add.','#1C7ED6',9,
+()=>{const a=ri(2,9),t=ri(1,4)*10,o=ri(1,9),n=t+o;return{q:`${a} × ${n}`,a:a*n,steps:[`Split ${n} into ${t} + ${o}.`,`${a} × ${t} = ${a*t} and ${a} × ${o} = ${a*o}.`,`Add the products: ${a*t} + ${a*o} = ${a*n}`]}},
+[{h:'The sum of the products',b:`<p><b>Samuccayaguṇitaḥ</b> means "the sum of the products". Split a number into easy parts, multiply each part, then add.</p>`+ex('7 × 13',['13 = 10 + 3.','7 × 10 = 70 and 7 × 3 = 21.','70 + 21 = 91.'],'= 91')},
+ {h:'More splitting',b:ex('4 × 26',['26 = 20 + 6.','4 × 20 = 80 and 4 × 6 = 24.'],'= 104')+ex('6 × 35',['35 = 30 + 5.','6 × 30 = 180 and 6 × 5 = 30.'],'= 210')}],
+['Split and multiply','7 cuts 13 into two easy pieces, 10 and 3. 7 × 10 = 70 and 7 × 3 = 21. Add them up: 91.']);
+
+U('box','Upasutra 13','The Magic Box','Guṇitasamuccayaḥ Samuccayaguṇitaḥ · the product of the sums is the sum of the products','Split both numbers, fill the box, add the four squares.','#E8590C',14,
+()=>{const a=ri(1,3),b=ri(1,6),c=ri(1,3),d=ri(1,6),x=a*10+b,y=c*10+d,p=[a*c*100,a*10*d,b*c*10,b*d];
+  return{q:`${x} × ${y}`,a:x*y,steps:[`Split both: ${x} = ${a*10} + ${b} and ${y} = ${c*10} + ${d}.`,`Box: ${a*10} × ${c*10} = ${p[0]}, ${a*10} × ${d} = ${p[1]}, ${b} × ${c*10} = ${p[2]}, ${b} × ${d} = ${p[3]}.`,`Add the squares: ${p.join(' + ')} = ${x*y}`]}},
+[{h:'Fill the box',b:`<p><b>Guṇitasamuccayaḥ Samuccayaguṇitaḥ</b> means "the product of the sums is the sum of the products". Split both numbers, put the parts round a box, multiply into each square, then add.</p><pre class="lay">      10     3
+ 10 [100]  [30]
+  2 [ 20]  [ 6]</pre><div class="exa">12 × 13 = 100 + 30 + 20 + 6 = 156</div>`},
+ {h:'More boxes',b:ex('21 × 14',['21 = 20 + 1 and 14 = 10 + 4.','Box: 200, 80, 10, 4.','Add: 294.'],'= 294')+ex('13 × 13',['10 + 3 and 10 + 3.','Box: 100, 30, 30, 9.'],'= 169')}],
+['The magic box','Split 12 into 10 and 2, and 13 into 10 and 3. Each square of the box gets a product. Add all four squares: 156.']);
+
+U('lastdig','Upasutra 9','Last Digit Detective','Antyayoreva · only the last ones','The last digits tell you how the answer ends.','#495057',8,
+()=>{const x=ri(12,89),y=ri(12,89),c=x*y,ld=(x%10)*(y%10)%10,opts=new Set([c]);
+  for(const dl of shuffle([1,2,3,4,5,6,7,8,9,-1,-2,-3,-4,-5,-6,-7])){if(opts.size>=4)break;const v=c+dl;if(v>0&&![...opts].some(o=>o%10===v%10))opts.add(v)}
+  return{q:`Which is ${x} × ${y}?`,smallq:1,a:String(c),choices:shuffle([...opts].map(String)),steps:[`Only the last digits: ${x%10} × ${y%10} = ${(x%10)*(y%10)}.`,`So the answer must end in ${ld}.`,`Only ${c} ends in ${ld}!`]}},
+[{h:'Only the last digits',b:`<p><b>Antyayoreva</b> means "only the last ones". To find how an answer ends, you only need the last digits!</p>`+ex('How does 37 × 46 end?',['Only the last digits: 7 × 6 = 42.','So 37 × 46 ends in 2.'],'ends in 2')},
+ {h:'Detective choices',b:ex('Which is 23 × 14?\n321, 322, 324, 326',['3 × 4 = 12, so it ends in 2.','Only 322 ends in 2.'],'322')+`<p class="tip">This trick also checks your own answers. Wrong last digit? Try again!</p>`}],
+['The last-digit detective','The detective looks only at the last digits: 7 and 6. 7 × 6 = 42, so 37 × 46 must end in 2!']);
+
+U('base20','Upasutra 1','Twenty Town','Ānurūpyeṇa · in proportion','The Magic Cross with a new home: 20 or 50.','#D6336C',14,
+()=>{const base=pick([20,20,50]),m=base/10,sg=pick([1,-1]),dx=sg*ri(1,3),dy=sg*ri(1,3),x=base+dx,y=base+dy,cr=x+dy,pr=dx*dy;
+  return{q:`${x} × ${y}`,a:x*y,steps:[`Home is ${base} (${m} tens). Steps: ${dx>0?'+':'−'}${Math.abs(dx)} and ${dy>0?'+':'−'}${Math.abs(dy)}.`,`Cross: ${x} ${dy>0?'+':'−'} ${Math.abs(dy)} = ${cr}.`,`${base} is ${m} tens, so ${cr} × ${m} = ${cr*m} tens = ${cr*m*10}.`,`Down: ${Math.abs(dx)} × ${Math.abs(dy)} = ${pr}.`,`${cr*m*10} + ${pr} = ${x*y}`]}},
+[{h:'A new home',b:`<p><b>Ānurūpyeṇa</b> means "in proportion". It is the Magic Cross with a new home: 20 (which is 2 tens) or 50 (5 tens).</p>`+ex('22 × 23',['Steps from 20: + 2 and + 3.','Cross: 22 + 3 = 25.','20 is 2 tens: 25 × 2 = 50 tens = 500.','Down: 2 × 3 = 6.'],'500 + 6 = 506')},
+ {h:'Below home',b:ex('18 × 17',['Steps: − 2 and − 3.','Cross: 18 − 3 = 15.','15 × 2 = 30 tens = 300.','Down: 2 × 3 = 6.'],'= 306')+ex('48 × 47',['Home 50 is 5 tens. Steps − 2 and − 3.','Cross: 45. 45 × 5 = 225 tens = 2250.','Down: 6.'],'= 2256')}],
+['Twenty Town','22 and 23 live just past house 20. Cross over: 25. House 20 is 2 tens, so double it: 50 tens. Then 2 × 3 = 6. Answer: 506.']);
+
+U('twelve','Sutra 13','Coach Twelve','Sopāntyadvayamantyam · the last and twice the one before','To times by 12: double each digit and add its neighbour.','#0CA678',12,
+()=>{const n=ri(11,49),a=Math.floor(n/10),b=n%10,o=2*b,c1=Math.floor(o/10),t=2*a+b+c1,c2=Math.floor(t/10),h=a+c2;
+  return{q:`${n} × 12`,a:n*12,steps:[`Ones: double the last digit: 2 × ${b} = ${o}${c1?`, write ${o%10} and carry ${c1}`:''}.`,`Tens: double ${a} and add its neighbour ${b}: ${2*a} + ${b}${c1?` + ${c1}`:''} = ${t}${c2?`, write ${t%10} and carry ${c2}`:''}.`,`Front: ${a}${c2?` + ${c2}`:''} = ${h}.`,`Answer: ${n*12}`]}},
+[{h:'Double and add the neighbour',b:`<p><b>Sopāntyadvayamantyam</b> means "the last and twice the one before". To multiply by 12, go from right to left: <b>double each digit and add its right-hand neighbour</b>.</p>`+ex('23 × 12',['Ones: 2 × 3 = 6.','Tens: 2 × 2 + 3 = 7.','Front: 2.'],'= 276')},
+ {h:'With carrying',b:ex('37 × 12',['Ones: 2 × 7 = 14, write 4 and carry 1.','Tens: 2 × 3 + 7 + 1 = 14, write 4 and carry 1.','Front: 3 + 1 = 4.'],'= 444')+ex('41 × 12',['Ones: 2 × 1 = 2.','Tens: 2 × 4 + 1 = 9.','Front: 4.'],'= 492')}],
+['Coach Twelve','Coach 12 trains every digit: "Double yourself, then grab your neighbour!" 23 × 12 becomes 2, 7, 6 = 276.']);
+
+U('hug10','Upasutra 8','The Ten Hug','Antyayordaśake\'pi · when the last digits make 10','Same front, last digits make 10? Use the One-More Lift.','#F06595',7,
+()=>{const f=ri(1,9),u=ri(1,9),x=f*10+u,y=f*10+10-u;return{q:`${x} × ${y}`,a:x*y,steps:[`Same front ${f}. Last digits ${u} + ${10-u} = 10!`,`Front: ${f} × ${f+1} = ${f*(f+1)}.`,`Back: ${u} × ${10-u} = ${p2(u*(10-u))} (always two digits).`,`Answer: ${x*y}`]}},
+[{h:'When the last digits make 10',b:`<p><b>Antyayordaśake'pi</b> means "when the last digits add up to 10". If two numbers have the <b>same front digit</b> and their <b>last digits make 10</b>, use the One-More Lift!</p>`+ex('43 × 47',['Same front 4. 3 + 7 = 10.','Front: 4 × 5 = 20.','Back: 3 × 7 = 21.'],'= 2021')},
+ {h:'More pairs',b:ex('61 × 69',['6 × 7 = 42.','1 × 9 = 09 (two digits!).'],'= 4209')+ex('82 × 88',['8 × 9 = 72.','2 × 8 = 16.'],'= 7216')+`<p class="tip">It is the Five Shortcut's big brother: in 35 × 35, the last digits 5 + 5 also make 10.</p>`}],
+['The ten hug','43 and 47 hug because their last digits, 3 and 7, make 10. The front rides the lift: 4 × 5 = 20. The backs multiply: 3 × 7 = 21. Answer: 2021.']);
+
+U('sq10','Upasutra 6','Squares Below 10','Yāvadūnaṃ Tāvadūnam · lessen by the gap','Take the gap away, then put gap × gap on the end.','#FD7E14',6,
+()=>{const n=ri(5,9),d=10-n,f=n-d,s=d*d;return{q:`${n} × ${n}`,a:n*n,steps:[`${n} is ${d} below 10.`,`Lessen by the gap: ${n} − ${d} = ${f}.`,`Square the gap: ${d} × ${d} = ${s}.`,s>=10?`${s} is too big for one place: ${f} tens + ${s} = ${n*n}.`:`Answer: ${f}${s} = ${n*n}`]}},
+[{h:'Lessen by the gap',b:`<p><b>Yāvadūnaṃ Tāvadūnam</b> means "whatever the gap, take that much away". To square a number just below 10:</p><ol><li>Find the gap to 10.</li><li>Take the gap away from the number.</li><li>Put gap × gap on the end.</li></ol>`+ex('8 × 8',['8 is 2 below 10.','8 − 2 = 6.','2 × 2 = 4.'],'= 64')},
+ {h:'More squares',b:ex('9 × 9',['Gap 1. 9 − 1 = 8.','1 × 1 = 1.'],'= 81')+ex('7 × 7',['Gap 3. 7 − 3 = 4.','3 × 3 = 9.'],'= 49')+ex('6 × 6',['Gap 4. 6 − 4 = 2.','4 × 4 = 16. Too big! 2 tens + 16 = 36.'],'= 36')}],
+['Squares below 10','8 stands 2 steps from home 10. Take 2 steps away: 6. The gap squared: 2 × 2 = 4. So 8 × 8 = 64.']);
+
+U('sq100','Upasutra 7','Squares Near 100','Yāvadūnaṃ Tāvadūnīkṛtya Vargaṃ ca Yojayet · lessen by the gap and add the square of the gap','Take the gap away, then add the gap squared in two places.','#F76707',12,
+()=>{const n=ri(88,99),d=100-n,f=n-d,s=d*d;return{q:`${n} × ${n}`,a:n*n,steps:[`${n} is ${d} below 100.`,`Lessen by the gap: ${n} − ${d} = ${f}.`,`Square the gap: ${d} × ${d} = ${s}, written in two places: ${s>=100?s:p2(s)}.`,s>=100?`${s} has three digits, so carry: ${f}00 + ${s} = ${n*n}`:`Answer: ${f}${p2(s)} = ${n*n}`]}},
+[{h:'Lessen and add the square',b:`<p><b>Yāvadūnaṃ Tāvadūnīkṛtya Vargaṃ ca Yojayet</b> means "lessen by the gap, then add the square of the gap". Now home is 100, so the gap squared fills <b>two places</b>.</p>`+ex('96 × 96',['96 is 4 below 100.','96 − 4 = 92.','4 × 4 = 16.'],'= 9216')},
+ {h:'More near 100',b:ex('98 × 98',['Gap 2. 98 − 2 = 96.','2 × 2 = 04 (two places!).'],'= 9604')+ex('93 × 93',['Gap 7. 93 − 7 = 86.','7 × 7 = 49.'],'= 8649')+ex('89 × 89',['Gap 11. 89 − 11 = 78.','11 × 11 = 121. Carry the 1: 78 + 1 = 79, keep 21.'],'= 7921')}],
+['Squares near 100','96 is 4 steps from home 100. Take 4 away: 92. Then the gap squared: 16. Together: 9216.']);
+
+U('squp','Sutra 10','Squares Above Home','Yāvadūnam · whatever the extra','Add the extra, then put the extra squared on the end.','#E67700',10,
+()=>{const big=ri(0,2)===0,base=big?100:10,s=big?ri(1,12):ri(1,9),n=base+s,f=n+s,q=s*s,over=big?q>=100:q>=10;
+  return{q:`${n} × ${n}`,a:n*n,steps:[`${n} is ${s} above ${base}.`,`Add the extra: ${n} + ${s} = ${f}.`,`Square the extra: ${s} × ${s} = ${q}.`,over?`Too big for its place, so carry: ${f}${big?'00':'0'} + ${q} = ${n*n}`:`Answer: ${f}${big?p2(q):q} = ${n*n}`]}},
+[{h:'Add the extra',b:`<p><b>Yāvadūnam</b> means "whatever the extra (or the gap)". For numbers just <b>above</b> home, add the extra, then put the extra squared on the end.</p>`+ex('13 × 13',['13 is 3 above 10.','13 + 3 = 16.','3 × 3 = 9.'],'= 169')},
+ {h:'Above 100',b:ex('104 × 104',['4 above 100. 104 + 4 = 108.','4 × 4 = 16 (two places).'],'= 10816')+ex('14 × 14',['14 + 4 = 18.','4 × 4 = 16. Carry: 180 + 16.'],'= 196')+ex('111 × 111',['111 + 11 = 122.','11 × 11 = 121. Carry: 12200 + 121.'],'= 12321')}],
+['Squares above home','13 is 3 steps past home 10. Add the 3: 16. Then 3 × 3 = 9 goes on the end: 169.']);
+
+U('seven143','Upasutra 4','The Magic 143','Kevalaiḥ Saptakaṃ Guṇyāt · for 7, multiply by 143','143 × 7 = 1001. Then 1001 copies numbers!','#9C36B5',9,
+()=>{const t=ri(0,2);
+  if(t===0){const k=ri(1,9);return{q:`143 × ${7*k}`,a:1001*k,steps:[`${7*k} = 7 × ${k}.`,'143 × 7 = 1001 (the magic!).',`1001 × ${k} = ${1001*k}`]}}
+  const n=t===1?ri(12,99):ri(101,999);return{q:`${n} × 1001`,a:n*1001,steps:['× 1001 is a copy machine.',`Write ${n}, then write it again with 3 places: ${L(n)}.`,`Answer: ${n*1001}`]}},
+[{h:'The magic of 143',b:`<p><b>Kevalaiḥ Saptakaṃ Guṇyāt</b> means "for 7, multiply by 143". The secret: <b>143 × 7 = 1001</b>!</p>`+ex('143 × 14',['14 = 7 × 2.','143 × 7 = 1001, so double it.'],'= 2002')+ex('143 × 21',['21 = 7 × 3.','1001 × 3.'],'= 3003')},
+ {h:'Copy machine 1001',b:`<p>Multiplying by 1001 is a copy machine. It writes a 3-digit number twice!</p>`+ex('256 × 1001',['Write 256 twice.'],'= 256256')+ex('47 × 1001',['47 with 3 places is 047.','Write 47, then 047.'],'= 47047')}],
+['The magic 143','143 and 7 give each other a high five, and a giant 1001 appears! So 143 × 14 = 2002 and 143 × 21 = 3003.']);
+
+U('lastrem','Sutra 12','Last Digit Leftovers','Śeṣāṇyaṅkena Caramena · the leftovers from the last digit','For ÷ 10, ÷ 2 and ÷ 5, only the last digit matters.','#1971C2',6,
+()=>{const t=ri(0,2),n=ri(13,999),l=n%10;
+  if(t===0)return{q:`${n} ÷ 10\nleftover?`,smallq:1,a:l,steps:['For ÷ 10, the leftover is just the last digit.',`The last digit of ${n} is ${l}.`]};
+  if(t===1)return{q:`${n} ÷ 2\nleftover?`,smallq:1,a:l%2,steps:[`Look only at the last digit: ${l}.`,l%2?`${l} is odd, so 1 is left over.`:`${l} is even, so nothing is left over: 0.`]};
+  return{q:`${n} ÷ 5\nleftover?`,smallq:1,a:l%5,steps:[`Look only at the last digit: ${l}.`,l>=5?`${l} − 5 = ${l-5}, so the leftover is ${l%5}.`:`${l} is less than 5, so the leftover is ${l}.`]}},
+[{h:'The last digit knows',b:`<p><b>Śeṣāṇyaṅkena Caramena</b> means "the leftovers from the last digit". When you divide by 10, 2 or 5, the last digit tells you what is left over!</p>`+ex('347 ÷ 10',['The last digit is 7.'],'leftover 7')+ex('347 ÷ 2',['7 is odd.'],'leftover 1')+ex('347 ÷ 5',['7 − 5 = 2.'],'leftover 2')},
+ {h:'Even and odd',b:`<p>Even last digits (0, 2, 4, 6, 8) leave 0 when you ÷ 2.<br>Odd last digits (1, 3, 5, 7, 9) leave 1.</p>`+ex('5618 ÷ 2',['The last digit 8 is even.'],'leftover 0')+ex('93 ÷ 5',['The last digit 3 is less than 5.'],'leftover 3')}],
+['The number train','Only the last carriage matters! For 347 the last carriage is 7. ÷ 10 leaves 7, ÷ 2 leaves 1 and ÷ 5 leaves 2.']);
+
+U('remstay','Upasutra 2','The Leftover Stays','Śiṣyate Śeṣasaṃjñaḥ · the remainder stays the same','Add whole jumps and the leftover does not change.','#F08C00',8,
+()=>{const d=ri(3,9),r=ri(1,d-1);
+  if(ri(0,1)===0){const n1=d*ri(1,5)+r,k=ri(1,4),n2=n1+d*k;return{q:`${n1} ÷ ${d} → leftover ${r}\n${n2} ÷ ${d} → leftover ?`,smallq:1,a:r,steps:[`${n2} is ${n1} + ${d*k}, and ${d*k} is in the ${d} times table.`,`Adding whole ${d}s does not change the leftover. It stays ${r}.`]}}
+  const m=d*ri(2,9);return{q:`${m+r} ÷ ${d}\nleftover?`,smallq:1,a:r,steps:[`${m} is in the ${d} times table.`,`${m+r} = ${m} + ${r}, so ${r} is left over.`]}},
+[{h:'The leftover stays',b:`<p><b>Śiṣyate Śeṣasaṃjñaḥ</b> means "the leftover stays the same". If you add a whole jump of the number you divide by, the leftover does not change.</p>`+ex('7 ÷ 5 leaves 1',['12 = 7 + 5 and 17 = 7 + 10.','So 12 ÷ 5 and 17 ÷ 5 leave 1 too!'],'leftover 1')},
+ {h:'Find the leftover fast',b:ex('23 ÷ 4',['20 is in the 4 times table.','23 = 20 + 3.'],'leftover 3')+ex('47 ÷ 6',['42 is in the 6 times table.','47 = 42 + 5.'],'leftover 5')}],
+['Jumping by 5s','5 jumps along by 5s: 2, 7, 12, 17, 22. Each time you divide by 5, the leftover is still 2!']);
+
+U('seven','Upasutra 5','The 7 Hug Test','Veṣṭanam · by hugging (osculation)','Is it in the 7 times table? Hug the last digit with 5!','#099268',12,
+()=>{const yes=ri(0,1)===0;let n;do{n=yes?7*ri(2,20):ri(14,140)}while(!yes&&n%7===0);
+  const r=Math.floor(n/10),l=n%10,v=r+5*l,ok=n%7===0;
+  return{q:`Is ${n} in the 7 times table?`,smallq:1,a:ok?'Yes':'No',choices:['Yes','No'],steps:[`Hug the last digit: ${l} × 5 = ${5*l}.`,`Add it to the rest: ${r} + ${5*l} = ${v}.`,ok?`${v} is in the 7 times table, so YES!`:`${v} is not in the 7 times table, so NO.`]}},
+[{h:'The 7 hug test',b:`<p><b>Veṣṭanam</b> means "hugging". Is a number in the 7 times table? Hug the last digit with 5!</p><ol><li>Multiply the last digit by 5.</li><li>Add it to the rest of the number.</li><li>Is the result in the 7 times table? Then the number is too!</li></ol>`+ex('91',['Last digit 1 × 5 = 5.','9 + 5 = 14, and 14 is 7 × 2.'],'Yes!')},
+ {h:'More hugs',b:ex('84',['4 × 5 = 20.','8 + 20 = 28 = 7 × 4.'],'Yes!')+ex('65',['5 × 5 = 25.','6 + 25 = 31. Not in the 7 times table.'],'No')+ex('133',['3 × 5 = 15.','13 + 15 = 28 = 7 × 4.'],'Yes!')}],
+['The 7 hug','In 91, the last digit 1 hugs the front with 5: 9 + 5 = 14. 14 is in the 7 times table, so 91 is too!']);
+
+U('ratio','Sutra 6','The Ratio Ladder','Ānurūpye Śūnyamanyat · if one is in proportion, the other is zero','When one side grows some times, the other grows the same times.','#C2255C',10,
+()=>{const [it,unit,per]=pick([['pencils','CHF',0],['apples','CHF',0],['cars','wheels',4],['spiders','legs',8],['bags','sweets',0]]),a=ri(2,5),p=per||ri(2,6),c=a*p,k=ri(2,4),b=a*k;
+  if(ri(0,2)>0)return{q:`${a} ${it} → ${c} ${unit}\n${b} ${it} → ? ${unit}`,smallq:1,a:c*k,steps:[`${b} is ${k} times ${a}.`,`In proportion, the ${unit} grow ${k} times too: ${c} × ${k} = ${c*k}.`]};
+  return{q:`${b} ${it} → ${c*k} ${unit}\n${a} ${it} → ? ${unit}`,smallq:1,a:c,steps:[`${a} is ${b} ÷ ${k}.`,`So divide by ${k} too: ${c*k} ÷ ${k} = ${c}.`]}},
+[{h:'Keep it in proportion',b:`<p><b>Ānurūpye Śūnyamanyat</b> means "if one is in proportion, the other is zero". Grown-ups use it for equations. The idea behind it: <b>when one thing grows some times, the other grows the same times</b>.</p>`+ex('3 pencils → 6 CHF\n9 pencils → ?',['9 is 3 times 3.','So the cost is 3 times too: 6 × 3.'],'18 CHF')},
+ {h:'Up and down the ladder',b:ex('2 cars → 8 wheels\n6 cars → ?',['6 is 3 times 2.','8 × 3.'],'24 wheels')+ex('4 bags → 12 sweets\n2 bags → ?',['2 is half of 4.','Half of 12.'],'6 sweets')}],
+['The ratio ladder','3 pencils cost 6 francs. Three times as many pencils cost three times as much: 9 pencils cost 18 francs.']);
+
+U('factors','Sutra 16','Factor Friends','Guṇakasamuccayaḥ · the factors and their sum','Find two numbers that multiply to one number and add to another.','#7048E8',12,
+()=>{let a,b,P,pairs;do{a=ri(1,9);b=ri(a,12);P=a*b;pairs=[];for(let i=1;i*i<=P;i++)if(P%i===0)pairs.push([i,P/i])}while(pairs.length<2&&ri(0,3)>0);
+  const S2=a+b,lab=p=>`${p[0]} and ${p[1]}`,ch=new Set([lab([a,b])]);for(const p of shuffle(pairs.slice()))if(ch.size<4)ch.add(lab(p));
+  let k=1;while(ch.size<3){const f=[Math.max(1,a-k),b+k];if(f[0]*f[1]!==P)ch.add(lab(f));k++}
+  return{q:`Two numbers multiply to ${P}\nand add to ${S2}.\nWhich pair?`,smallq:1,a:lab([a,b]),choices:shuffle([...ch]),steps:[`Factor pairs of ${P}: ${pairs.map(lab).join(', ')}.`,`Which pair adds to ${S2}? ${a} + ${b} = ${S2}.`,`Answer: ${a} and ${b}`]}},
+[{h:'Factor friends',b:`<p><b>Guṇakasamuccayaḥ</b> means "the factors and their sum". Grown-ups use it to break big expressions into factors. We play the game behind it: find two numbers that <b>multiply</b> to one number and <b>add</b> to another.</p>`+ex('Multiply to 12, add to 7',['Factor pairs of 12: 1 and 12, 2 and 6, 3 and 4.','Which adds to 7? 3 + 4 = 7.'],'3 and 4')},
+ {h:'More factor friends',b:ex('Multiply to 18, add to 9',['Pairs: 1 and 18, 2 and 9, 3 and 6.','3 + 6 = 9.'],'3 and 6')+ex('Multiply to 24, add to 10',['Pairs: 1 and 24, 2 and 12, 3 and 8, 4 and 6.','4 + 6 = 10.'],'4 and 6')+`<p class="tip">Draw the number as a rectangle of dots. Each rectangle is a factor pair!</p>`}],
+['Factor friends','12 dots make a 3 by 4 rectangle. 3 × 4 = 12 and 3 + 4 = 7. Those two are factor friends!']);
+
+const ORDER=['ten','nine','look','parts','allfrom9','bridge','cancel','sumdiff','steps','fruits','twins','zeros','split','box','lastdig','cross','base20','eleven','twelve','lightning','five','hug10','sq10','sq100','squp','seven143','lastrem','remstay','seven','ratio','factors','magic','tour'];
+const UNITS=ORDER.map(id=>DEF[id]);
+UNITS.forEach(u=>u.belt=0);
+[['allfrom9',1],['fruits',2],['cross',3],['lightning',4],['seven143',5],['tour',6]].forEach(([id,b])=>DEF[id].belt=b);
+const PHASES={0:'Part 1 · Adding, taking away and puzzles',10:'Part 2 · Multiplying',20:'Part 3 · Squares and special numbers',26:'Part 4 · Leftovers, checks and factors',32:'The final'};
+DEF.tour.gen=()=>pick(UNITS.slice(0,-1)).gen();DEF.tour.base=10;
+G.length=0;UNITS.forEach(u=>G.push(u.gen));BASE.length=0;UNITS.forEach(u=>BASE.push(u.base));
+
+
+/* ---------- state ---------- */
+const KEY='ninjaMathsDojo.v1';
+const fresh=()=>({name:'Ninja',stars:0,unlocked:0,best:{},bestAvg:{},bestTA:{},bestP:{},stages:{},sp:'ninja',skin:'#F2C29B',foodP:0,fed:{},light:0,items:[],eq:[],gis:[0],gi:0,belt:0,trophies:0,sound:true});
+let S=fresh();
+try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(fresh(),JSON.parse(raw))}catch(e){}
+for(const k in S.best){if(typeof S.best[k]==='number')S.best[k]={c:S.best[k],t:10}}
+if(!S.v2){/* move progress from the old 10-level order to the new order */
+  const mp=k=>{const id=OLD_IDS[+k];return id?String(ORDER.indexOf(id)):k};
+  for(const key of ['best','bestAvg','bestTA','bestP','stages']){const o=S[key]||{},n={};for(const k in o)n[mp(k)]=o[k];S[key]=n}
+  S.v2=1}
+if(!S.stagesMigrated){/* credit rounds already played under the old rules */
+  for(const u in S.best){const b=S.best[u],st=S.stages[u]=S.stages[u]||{};
+    if(b.t>=10&&b.c>=Math.ceil(b.t*.7))st.q=1;if(b.t>=20&&b.c>=Math.ceil(b.t*.7))st.t=1;if(b.t>=30&&b.c>=24)st.m=1}
+  for(const u in S.bestTA){if(S.bestTA[u]>=taTarget(+u))(S.stages[u]=S.stages[u]||{}).ta=1}
+  S.stagesMigrated=1}
+const stDone=(u,k)=>!!(S.stages[u]&&S.stages[u][k]);
+const nextStage=u=>{const i=STAGES.findIndex(s=>!stDone(u,s.k));return i<0?4:i};
+const unitDone=u=>nextStage(u)===4;
+function relock(){let i=0;while(i<UNITS.length-1&&unitDone(i))i++;S.unlocked=i}
+relock();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+function equip(k){const sl=ITEMS[k].slot;if(sl)S.eq=S.eq.filter(x=>ITEMS[x].slot!==sl);if(!S.eq.includes(k))S.eq.push(k)}
+
+/* ---------- character ---------- */
+let svgN=0;
+const star=(cx,cy,R,r)=>{let p=[];for(let i=0;i<10;i++){const a=Math.PI/5*i-Math.PI/2,d=i%2?r:R;p.push((cx+d*Math.cos(a)).toFixed(1)+','+(cy+d*Math.sin(a)).toFixed(1))}return p.join(' ')};
+/* ---------- hero lab: species, power, food ---------- */
+const SPECIES={ninja:{n:'Ninja kid'},tiger:{n:'Tiger',fur:'#FFA94D'},panda:{n:'Panda',fur:'#FFFFFF'},fox:{n:'Fox',fur:'#FF8A3D'},bunny:{n:'Bunny',fur:'#F1F3F5'},bear:{n:'Bear',fur:'#A9744F'},dragon:{n:'Dragon',fur:'#4CC38A',belt:3}};
+const SKINS=['#F9D7B5','#F2C29B','#D9A066','#B5794A','#8D5524'];
+function headSVG(sp,f,ink){
+  const eyes=`<circle cx="86" cy="70" r="5.5" fill="${ink}"/><circle cx="114" cy="70" r="5.5" fill="${ink}"/><circle cx="88" cy="68" r="1.8" fill="#fff"/><circle cx="116" cy="68" r="1.8" fill="#fff"/>`;
+  const cheeks=`<ellipse cx="76" cy="84" rx="6.5" ry="4" fill="#FF8FA0" opacity=".55"/><ellipse cx="124" cy="84" rx="6.5" ry="4" fill="#FF8FA0" opacity=".55"/>`;
+  const smile=`<path d="M93 92 Q100 98 107 92" fill="none" stroke="${ink}" stroke-width="2.6" stroke-linecap="round"/>`;
+  const headC=(st='')=>`<circle cx="100" cy="66" r="40" fill="${f}" ${st}/>`;
+  if(sp==='tiger')return `<circle cx="68" cy="36" r="13" fill="${f}"/><circle cx="132" cy="36" r="13" fill="${f}"/><circle cx="68" cy="36" r="7" fill="#FFD8A8"/><circle cx="132" cy="36" r="7" fill="#FFD8A8"/>`+headC()
+    +`<path d="M96 27 L100 42 L104 27Z" fill="#6B3A12"/><path d="M80 34 L86 46 M120 34 L114 46 M61 62 L74 65 M61 73 L73 73 M139 62 L126 65 M139 73 L127 73" stroke="#6B3A12" stroke-width="4" stroke-linecap="round"/><ellipse cx="100" cy="88" rx="20" ry="13" fill="#FFF4E6"/>`+cheeks+eyes+`<path d="M95 81 L105 81 L100 87Z" fill="#3B2314"/>`+smile;
+  if(sp==='panda')return `<circle cx="66" cy="34" r="14" fill="#2B2B2B"/><circle cx="134" cy="34" r="14" fill="#2B2B2B"/>`+headC('stroke="#D0D4DA" stroke-width="2"')
+    +`<ellipse cx="85" cy="70" rx="10" ry="13" transform="rotate(25 85 70)" fill="#2B2B2B"/><ellipse cx="115" cy="70" rx="10" ry="13" transform="rotate(-25 115 70)" fill="#2B2B2B"/><circle cx="86" cy="70" r="5" fill="#fff"/><circle cx="114" cy="70" r="5" fill="#fff"/><circle cx="87" cy="70" r="2.6" fill="${ink}"/><circle cx="115" cy="70" r="2.6" fill="${ink}"/>`+cheeks+`<ellipse cx="100" cy="84" rx="6" ry="4" fill="#2B2B2B"/>`+smile;
+  if(sp==='fox')return `<path d="M62 52 L64 12 L94 34Z M138 52 L136 12 L106 34Z" fill="${f}"/><path d="M68 44 L69 24 L84 36Z M132 44 L131 24 L116 36Z" fill="#fff"/>`+headC()
+    +`<path d="M62 74 Q100 122 138 74 Q120 90 100 88 Q80 90 62 74Z" fill="#fff"/>`+eyes+`<circle cx="100" cy="86" r="4.5" fill="${ink}"/>`+smile;
+  if(sp==='bunny')return `<ellipse cx="82" cy="12" rx="10" ry="30" fill="${f}" stroke="#D9DDE3" stroke-width="2"/><ellipse cx="118" cy="12" rx="10" ry="30" fill="${f}" stroke="#D9DDE3" stroke-width="2"/><ellipse cx="82" cy="14" rx="5" ry="21" fill="#FFC9D6"/><ellipse cx="118" cy="14" rx="5" ry="21" fill="#FFC9D6"/>`+headC('stroke="#D9DDE3" stroke-width="2"')
+    +cheeks+eyes+`<ellipse cx="100" cy="84" rx="5" ry="3.5" fill="#FF8FA3"/>`+smile+`<rect x="96" y="95" width="8" height="6" rx="1" fill="#fff" stroke="#D9DDE3"/>`;
+  if(sp==='bear')return `<circle cx="66" cy="36" r="13" fill="${f}"/><circle cx="134" cy="36" r="13" fill="${f}"/><circle cx="66" cy="36" r="7" fill="#E8C39E"/><circle cx="134" cy="36" r="7" fill="#E8C39E"/>`+headC()
+    +`<ellipse cx="100" cy="88" rx="18" ry="13" fill="#E8C39E"/>`+eyes+`<ellipse cx="100" cy="82" rx="6" ry="4" fill="${ink}"/>`+smile;
+  if(sp==='dragon')return `<path d="M70 38 L58 4 L84 30Z M130 38 L142 4 L116 30Z" fill="#FFD43B" stroke="#F08C00" stroke-width="1.5"/><path d="M86 30 L93 14 L100 28 L107 14 L114 30Z" fill="#2E9E6B"/>`+headC()
+    +`<ellipse cx="100" cy="88" rx="20" ry="13" fill="#8CE3B5"/><circle cx="94" cy="83" r="2" fill="${ink}"/><circle cx="106" cy="83" r="2" fill="${ink}"/>`+cheeks+eyes+smile+`<circle cx="70" cy="58" r="3" fill="#2E9E6B"/><circle cx="130" cy="58" r="3" fill="#2E9E6B"/>`;
+  return `<circle cx="61" cy="70" r="8" fill="${f}"/><circle cx="139" cy="70" r="8" fill="${f}"/>`+headC()+`<path d="M60 62 Q62 24 100 24 Q140 24 140 62 Q128 42 100 44 Q74 44 60 62Z" fill="#2B2118"/>`+cheeks+eyes+`<path d="M88 86 Q100 97 112 86" fill="none" stroke="${ink}" stroke-width="3.2" stroke-linecap="round"/>`;
+}
+const pwOf=k=>{const it=ITEMS[k];return it.pw??(it.rare?15:it.speed?8:5)};
+const power=()=>S.eq.reduce((a,k)=>a+pwOf(k),0)+(S.foodP||0);
+const LV=[0,20,45,80,120,170,230,300,380,470,580];
+const TITLES=['Rookie','Trainee','Fighter','Warrior','Knight','Champion','Hero','Super Hero','Legend','Mythic','Grand Master'];
+const levelOf=p=>{let i=0;while(i<LV.length-1&&p>=LV[i+1])i++;return i};
+const FOODS=[{k:'apple',n:'Apple',c:3,p:1},{k:'banana',n:'Banana',c:3,p:1},{k:'carrot',n:'Carrot',c:4,p:2},{k:'milk',n:'Glass of milk',c:5,p:2},{k:'broccoli',n:'Broccoli',c:6,p:3},{k:'nuts',n:'Nuts',c:6,p:3},{k:'dal',n:'Dal and rice',c:8,p:4},{k:'fish',n:'Fish',c:8,p:4}];
+function foodSVG(k){const w=c=>`<svg viewBox="0 0 48 48" aria-hidden="true">${c}</svg>`;
+  if(k==='apple')return w(`<path d="M24 14 q2 -7 7 -9" stroke="#7A4A1E" stroke-width="3" fill="none"/><ellipse cx="30" cy="9" rx="6" ry="3" fill="#51CF66"/><circle cx="24" cy="28" r="15" fill="#E0445A"/><ellipse cx="19" cy="22" rx="4" ry="6" fill="#fff" opacity=".35"/>`);
+  if(k==='banana')return w(`<path d="M8 12 Q14 44 42 32 Q34 34 26 30 Q16 24 14 10Z" fill="#FFD43B" stroke="#E0A800" stroke-width="2" stroke-linejoin="round"/>`);
+  if(k==='carrot')return w(`<path d="M24 12 L18 2 M24 12 L24 1 M24 12 L30 2" stroke="#2F9E44" stroke-width="3" stroke-linecap="round"/><path d="M14 14 L34 14 L24 46Z" fill="#FF922B"/><path d="M19 22 h5 M21 30 h4" stroke="#E8590C" stroke-width="2"/>`);
+  if(k==='milk')return w(`<path d="M13 8 H35 L32 44 H16Z" fill="#E7F5FF" stroke="#74C0FC" stroke-width="2"/><path d="M14.5 18 H33.5 L32 44 H16Z" fill="#fff"/>`);
+  if(k==='broccoli')return w(`<rect x="20" y="26" width="8" height="18" rx="3" fill="#94D82D"/><circle cx="15" cy="22" r="9" fill="#2F9E44"/><circle cx="33" cy="22" r="9" fill="#2F9E44"/><circle cx="24" cy="14" r="10" fill="#37B24D"/>`);
+  if(k==='nuts')return w(`<ellipse cx="17" cy="28" rx="10" ry="13" fill="#B5835A" transform="rotate(-20 17 28)"/><ellipse cx="31" cy="26" rx="9" ry="12" fill="#D9A066" transform="rotate(20 31 26)"/><path d="M17 18 v20 M31 17 v18" stroke="#8C5A35" stroke-width="1.5"/>`);
+  if(k==='dal')return w(`<ellipse cx="24" cy="24" rx="19" ry="7" fill="#FCC419"/><circle cx="16" cy="22" r="3" fill="#fff"/><circle cx="21" cy="20" r="3" fill="#fff"/><path d="M5 24 Q8 42 24 42 Q40 42 43 24Z" fill="#E9A86A"/>`);
+  return w(`<path d="M34 24 L46 14 L46 34Z" fill="#4DABF7"/><ellipse cx="22" cy="24" rx="17" ry="11" fill="#74C0FC"/><circle cx="12" cy="21" r="2.5" fill="${INK}"/><path d="M20 18 q4 6 0 12" stroke="#4DABF7" stroke-width="2" fill="none"/>`)}
+
+function ninja(o){
+  const eq=new Set(o.eq||[]),h=k=>eq.has(k),g=GIS[o.gi||0],bc=BELTS[o.belt||0].c,id='nj'+(svgN++),ink='#1F2A4D',sp=o.sp||S.sp||'ninja',skin=sp==='ninja'?(o.skin||S.skin||'#F2C29B'):(SPECIES[sp]||SPECIES.ninja).fur;
+  let s=`<svg viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${o.label||'Hero character'}"><defs><radialGradient id="${id}a"><stop offset="0" stop-color="#FFE27A" stop-opacity=".95"/><stop offset="1" stop-color="#FFE27A" stop-opacity="0"/></radialGradient><linearGradient id="${id}r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF5E5E"/><stop offset=".25" stop-color="#FFB443"/><stop offset=".5" stop-color="#F7E04B"/><stop offset=".75" stop-color="#4CC38A"/><stop offset="1" stop-color="#5B8DEF"/></linearGradient></defs>`;
+  if(h('aura'))s+=`<circle cx="100" cy="128" r="98" fill="url(#${id}a)"/>`;
+  if(h('cape'))s+=`<path d="M72 112 Q100 104 128 112 L152 214 Q100 226 48 214 Z" fill="#D63A4A"/>`;
+  if(h('rainbow'))s+=`<path d="M72 112 Q100 104 128 112 L152 214 Q100 226 48 214 Z" fill="url(#${id}r)"/>`;
+  if(h('wings'))s+=`<path d="M76 118 Q30 74 14 118 Q30 114 28 140 Q44 126 46 152 Q58 132 78 142Z M124 118 Q170 74 186 118 Q170 114 172 140 Q156 126 154 152 Q142 132 122 142Z" fill="#fff" stroke="#FCC419" stroke-width="3" stroke-linejoin="round"/>`;
+  if(h('staff'))s+=`<line x1="34" y1="232" x2="170" y2="88" stroke="#9A6A34" stroke-width="7" stroke-linecap="round"/><line x1="34" y1="232" x2="170" y2="88" stroke="#C99A5B" stroke-width="2.5" stroke-dasharray="14 18"/>`;
+  if(h('backpack'))s+=`<rect x="118" y="114" width="36" height="50" rx="11" fill="#2FA4D7"/><rect x="124" y="140" width="24" height="14" rx="5" fill="#1F86B5"/>`;
+  if(h('jetpack'))s+=`<path d="M64 166 Q70 196 74 168 Q78 192 84 166Z M116 166 Q122 196 126 168 Q130 192 136 166Z" fill="#FF8A1F"/><path d="M68 166 Q73 184 76 168 Q79 182 80 166Z M120 166 Q125 184 128 168 Q131 182 132 166Z" fill="#FFE066"/><rect x="60" y="102" width="28" height="64" rx="12" fill="#AEB8CC" stroke="#6E7A93" stroke-width="2"/><rect x="112" y="102" width="28" height="64" rx="12" fill="#AEB8CC" stroke="#6E7A93" stroke-width="2"/><rect x="60" y="114" width="28" height="8" fill="#E0445A"/><rect x="112" y="114" width="28" height="8" fill="#E0445A"/>`;
+  s+=`<rect x="78" y="172" width="19" height="44" rx="7" fill="${g.c}" stroke="${g.d}" stroke-width="2"/><rect x="103" y="172" width="19" height="44" rx="7" fill="${g.c}" stroke="${g.d}" stroke-width="2"/>`;
+  s+=h('sneakers')?`<ellipse cx="86" cy="220" rx="15" ry="8" fill="#FF5A5F"/><path d="M73 223 H99" stroke="#fff" stroke-width="3"/><ellipse cx="114" cy="220" rx="15" ry="8" fill="#FF5A5F"/><path d="M101 223 H127" stroke="#fff" stroke-width="3"/>`:h('boots')?`<path d="M72 214 Q70 202 78 206 Q80 196 86 204 Q90 198 92 210 Z M100 214 Q98 202 106 206 Q108 196 114 204 Q118 198 120 210 Z" fill="#FFC93C"/><ellipse cx="86" cy="220" rx="15" ry="8" fill="#F2541B"/><ellipse cx="114" cy="220" rx="15" ry="8" fill="#F2541B"/><path d="M76 222 Q86 214 96 222 M104 222 Q114 214 124 222" stroke="#FFC93C" stroke-width="3" fill="none"/>`:`<ellipse cx="86" cy="219" rx="11" ry="6" fill="${skin}"/><ellipse cx="114" cy="219" rx="11" ry="6" fill="${skin}"/>`;
+  s+=`<path d="M76 118 L58 156 M124 118 L142 156" stroke="${g.d}" stroke-width="21" stroke-linecap="round"/><path d="M76 118 L58 156 M124 118 L142 156" stroke="${g.c}" stroke-width="16" stroke-linecap="round"/><circle cx="55" cy="162" r="9" fill="${skin}"/><circle cx="145" cy="162" r="9" fill="${skin}"/>`;
+  if(h('wristbands'))s+=`<rect x="52" y="144" width="19" height="9" rx="3" fill="#FFC93C" transform="rotate(25 61.5 148.5)"/><rect x="129" y="144" width="19" height="9" rx="3" fill="#FFC93C" transform="rotate(-25 138.5 148.5)"/>`;
+  s+=`<path d="M70 110 Q100 100 130 110 L128 182 Q100 186 72 182 Z" fill="${g.c}" stroke="${g.d}" stroke-width="2.5" stroke-linejoin="round"/><path d="M84 107 L100 140 L116 107" fill="none" stroke="${g.d}" stroke-width="3" stroke-linejoin="round"/>`;
+  if(h('armor'))s+=`<path d="M73 112 Q100 103 127 112 L125 150 Q100 158 75 150Z" fill="#FFD43B" stroke="#E0A800" stroke-width="2.5"/><path d="M100 108 V154" stroke="#E0A800" stroke-width="2"/><path d="M80 120 Q88 115 95 119" stroke="#fff" stroke-width="3" opacity=".7" fill="none"/>`;
+  if(h('backpack'))s+=`<path d="M80 110 L84 146 M120 110 L116 146" stroke="#1F86B5" stroke-width="5" stroke-linecap="round"/>`;
+  s+=`<path d="M97 160 L90 177 M103 160 L110 177" stroke="rgba(0,0,0,.28)" stroke-width="8" stroke-linecap="round"/><path d="M97 160 L90 177 M103 160 L110 177" stroke="${bc}" stroke-width="5" stroke-linecap="round"/><rect x="70" y="148" width="60" height="11" rx="3" fill="${bc}" stroke="rgba(0,0,0,.28)" stroke-width="1.5"/><rect x="94" y="145" width="12" height="16" rx="3" fill="${bc}" stroke="rgba(0,0,0,.28)" stroke-width="1.5"/>`;
+  if(h('bolt'))s+=`<polygon points="106,114 90,136 100,136 94,156 114,130 103,130 110,114" fill="#FFD43B" stroke="#E0A800" stroke-width="2" stroke-linejoin="round"/>`;
+  if(h('badge'))s+=`<polygon points="${star(117,127,8,3.6)}" fill="#F5B700" stroke="#C98A00" stroke-width="1"/>`;
+  if(h('medal'))s+=`<path d="M90 108 L100 126 L110 108" fill="none" stroke="#3D7BE0" stroke-width="5"/><circle cx="100" cy="132" r="10" fill="#F5B700" stroke="#C98A00" stroke-width="2"/><polygon points="${star(100,132,5.5,2.4)}" fill="#FFF3B0"/>`;
+  if(h('wand'))s+=`<line x1="146" y1="160" x2="168" y2="124" stroke="#7A4FC0" stroke-width="5" stroke-linecap="round"/><polygon points="${star(171,118,13,5.5)}" fill="#FFD43B" stroke="#E0A800" stroke-width="1.5"/><circle cx="186" cy="104" r="2.5" fill="#FFD43B"/><circle cx="158" cy="104" r="2" fill="#FFD43B"/>`;
+  if(h('sword'))s+=`<path d="M147 154 L155 160 L191 104 L187 96Z" fill="#E9EEF5" stroke="#8A97AB" stroke-width="2" stroke-linejoin="round"/><path d="M138 150 L160 166" stroke="#F5B700" stroke-width="6" stroke-linecap="round"/><path d="M140 170 L148 158" stroke="#7A4A1E" stroke-width="7" stroke-linecap="round"/>`;
+  if(h('hammer'))s+=`<line x1="146" y1="172" x2="170" y2="112" stroke="#8C5A35" stroke-width="7" stroke-linecap="round"/><rect x="150" y="92" width="44" height="26" rx="6" fill="#868E96" stroke="#495057" stroke-width="2" transform="rotate(22 172 105)"/><polygon points="176,94 166,108 173,108 168,120 180,104 173,104" fill="#FFD43B"/>`;
+  if(h('spear'))s+=`<line x1="150" y1="214" x2="178" y2="72" stroke="#8C5A35" stroke-width="5" stroke-linecap="round"/><polygon points="182,44 168,76 186,79" fill="#74C0FC" stroke="#1C7ED6" stroke-width="2" stroke-linejoin="round"/>`;
+  if(h('shield'))s+=`<circle cx="50" cy="160" r="25" fill="#2F80ED" stroke="#F5B700" stroke-width="5"/><polygon points="${star(50,161,13,5.5)}" fill="#FFD43B"/>`;
+  if(h('bow'))s+=`<path d="M48 106 Q10 160 48 214" fill="none" stroke="#8C5A35" stroke-width="6" stroke-linecap="round"/><line x1="48" y1="106" x2="48" y2="214" stroke="#ADB5BD" stroke-width="1.5"/><line x1="62" y1="160" x2="16" y2="160" stroke="#495057" stroke-width="3"/><polygon points="8,160 19,153 19,167" fill="#495057"/><path d="M62 160 l6 -5 M62 160 l6 5" stroke="#E0445A" stroke-width="3"/>`;
+  if(h('scarf'))s+=`<path d="M70 102 Q100 120 130 102 L131 113 Q100 132 69 113 Z" fill="#E94F64"/><path d="M118 116 L127 142 L113 139 Z" fill="#C93A50"/>`;
+  if(h('bowtie'))s+=`<path d="M100 114 L85 106 L85 122 Z M100 114 L115 106 L115 122 Z" fill="#7A4FC0"/><circle cx="100" cy="114" r="4.5" fill="#5B37A0"/>`;
+  s+=headSVG(sp,skin,ink);
+  if(h('mask'))s+=`<path d="M62 80 Q100 72 138 80 Q134 104 100 106 Q66 104 62 80Z" fill="#2C3E66"/>`;
+  if(h('sunglasses'))s+=`<rect x="75" y="62" width="21" height="14" rx="6" fill="#1B1B2F"/><rect x="104" y="62" width="21" height="14" rx="6" fill="#1B1B2F"/><path d="M96 67 H104" stroke="#1B1B2F" stroke-width="3"/><path d="M79 66 L85 66" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/>`;
+  if(h('goggles'))s+=`<rect x="58" y="64" width="84" height="9" rx="4" fill="#FF7A2F"/><circle cx="86" cy="69" r="11" fill="#8FE3FF" stroke="#2B3A55" stroke-width="4"/><circle cx="114" cy="69" r="11" fill="#8FE3FF" stroke="#2B3A55" stroke-width="4"/><path d="M80 65 L86 63 M108 65 L114 63" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`;
+  if(h('headband'))s+=`<path d="M136 51 L163 40 L158 55 Z M136 54 L160 66 L150 52 Z" fill="#C42840"/><rect x="60" y="46" width="80" height="11" rx="5" fill="#E53950"/>`;
+  if(h('helmet'))s+=`<path d="M58 62 Q58 16 100 16 Q142 16 142 62 Q128 54 100 54 Q72 54 58 62Z" fill="#CED4DA" stroke="#868E96" stroke-width="2.5"/><rect x="96" y="16" width="8" height="40" fill="#ADB5BD"/><path d="M100 16 Q114 -4 132 4 Q114 6 106 18Z" fill="#E0445A"/>`;
+  if(h('cap'))s+=`<path d="M60 52 Q60 18 100 18 Q140 18 140 52 Z" fill="#2E86DE"/><path d="M98 50 L160 48 Q162 58 140 58 L98 56 Z" fill="#1B6BB8"/><circle cx="100" cy="19" r="4" fill="#1B6BB8"/>`;
+  if(h('crown'))s+=`<path d="M68 36 L72 8 L88 26 L100 2 L112 26 L128 8 L132 36 Z" fill="#F5B700" stroke="#C98A00" stroke-width="2" stroke-linejoin="round"/><circle cx="100" cy="27" r="4" fill="#E0445A"/><circle cx="82" cy="31" r="3" fill="#2F80ED"/><circle cx="118" cy="31" r="3" fill="#2E9E6B"/>`;
+  if(h('dragon'))s+=`<g transform="translate(158 196)"><path d="M6 34 Q-8 40 -4 26" stroke="#3BA776" stroke-width="5" fill="none" stroke-linecap="round"/><ellipse cx="16" cy="30" rx="15" ry="11" fill="#4CC38A"/><ellipse cx="14" cy="33" rx="7" ry="5" fill="#B9EFD2"/><path d="M12 22 L2 6 L22 16 Z" fill="#9BE3BE"/><circle cx="29" cy="16" r="10" fill="#4CC38A"/><circle cx="32" cy="14" r="2.4" fill="#1F2A4D"/><path d="M24 8 L26 1 L30 7" fill="#F5B700"/></g>`;
+  return s+'</svg>';
+}
+const starIcon=(on=true)=>`<svg viewBox="0 0 24 24"><polygon points="${star(12,12.5,11,4.8)}" fill="${on?'#F5B700':'#D9DEC0'}" stroke="${on?'#C98A00':'#C3C9A6'}" stroke-width="1.2" stroke-linejoin="round"/></svg>`;
+const giftBox=(rare,spd)=>{const a=spd?'#2F80ED':rare?'#F5B700':'#FF7A2F',b=spd?'#5FA0F5':rare?'#FFD24D':'#FF9A5A',r=spd?'#FFD43B':rare?'#7A4FC0':'#2F80ED';
+  return `<svg viewBox="0 0 120 120"><rect x="16" y="50" width="88" height="58" rx="8" fill="${a}"/><rect x="10" y="36" width="100" height="20" rx="6" fill="${b}"/><rect x="53" y="36" width="14" height="72" fill="${r}"/><path d="M60 36 Q40 10 30 26 Q26 36 60 36 Q94 36 90 26 Q80 10 60 36Z" fill="none" stroke="${r}" stroke-width="7" stroke-linejoin="round"/>${rare?`<polygon points="${star(60,82,12,5)}" fill="#FFF3B0"/>`:''}${spd?`<polygon points="66,62 46,86 58,86 52,104 76,78 63,78 70,62" fill="#FFD43B" stroke="#C98A00" stroke-width="2" stroke-linejoin="round"/>`:''}</svg>`};
+
+/* ---------- number characters + sutra story pictures ---------- */
+const INK='#1F2A4D',DK='rgba(31,42,77,.35)';
+const NC={1:'#FF6B6B',2:'#FFA94D',3:'#FCC419',4:'#51CF66',5:'#20C997',6:'#4DABF7',7:'#748FFC',8:'#DA77F2',9:'#F783AC',10:'#F5B700'};
+function pal(n,o={}){
+  const t=String(n),len=t.length,w=44+14*(len-1),s=o.s||1,col=o.col||NC[n]||'#FF922B',m=o.mood||'happy',L=-w/2,R=w/2,ex=Math.min(10,w*.22);
+  const A={down:[[L-9,-24],[R+9,-24]],up:[[L-15,-80],[R+15,-80]],wave:[[L-9,-24],[R+15,-80]],holdR:[[L-9,-24],[R+10,-42]],holdL:[[L-10,-42],[R+9,-24]],reachR:[[L-9,-24],[R+20,-50]],reachL:[[L-20,-50],[R+9,-24]],hips:[[L-12,-30],[R+12,-30]]}[o.arms||'down'];
+  let g=`<g transform="translate(${o.x||0} ${o.y||0}) scale(${s})">`;
+  if(o.cape)g+=`<path d="M${L+6} -72 L${L-14} -4 L${R+14} -4 L${R-6} -72Z" fill="${o.cape}"/>`;
+  for(const lx of [-w*.26,w*.26])g+=`<rect x="${lx-4}" y="-18" width="8" height="15" rx="3" fill="${INK}"/><ellipse cx="${lx+(lx<0?-2:2)}" cy="-3" rx="7.5" ry="3.8" fill="${INK}"/>`;
+  A.forEach(([ax,ay],i)=>{const sx=i?R-4:L+4;g+=`<path d="M${sx} -48 L${ax} ${ay}" stroke="${DK}" stroke-width="9" stroke-linecap="round"/><path d="M${sx} -48 L${ax} ${ay}" stroke="${col}" stroke-width="6" stroke-linecap="round"/><circle cx="${ax}" cy="${ay}" r="5" fill="${col}" stroke="${DK}" stroke-width="1.5"/>`});
+  g+=`<rect x="${L}" y="-86" width="${w}" height="72" rx="22" fill="${col}" stroke="${DK}" stroke-width="2"/>`;
+  const fs=len>2?19:len>1?23:28;
+  if(o.sign)g+=`<g transform="rotate(-5 0 -30)"><rect x="${L+5}" y="-47" width="${w-10}" height="32" rx="3" fill="#FFFDF4" stroke="${INK}" stroke-width="1.3" stroke-dasharray="3 2"/><rect x="${L+2}" y="-51" width="11" height="5" fill="#E9D9A6" transform="rotate(-30 ${L+7} -48)"/><text x="0" y="-27" text-anchor="middle" font-size="17" fill="${INK}">${o.sign}</text><circle cx="-8" cy="-20" r="2.6" fill="${INK}"/><circle cx="0" cy="-20" r="2.6" fill="${INK}"/><circle cx="8" cy="-20" r="2.6" fill="none" stroke="#E0445A" stroke-width="1.3" stroke-dasharray="1.5 1.2"/></g>`;
+  else g+=`<ellipse cx="0" cy="-32" rx="${R-7}" ry="15" fill="#fff" opacity=".93"/><text x="0" y="${(-32+fs*.35).toFixed(1)}" text-anchor="middle" font-size="${fs}" fill="${INK}">${t}</text>`;
+  g+=`<ellipse cx="${-ex-6}" cy="-58" rx="4.5" ry="2.8" fill="#FF8FA0" opacity=".65"/><ellipse cx="${ex+6}" cy="-58" rx="4.5" ry="2.8" fill="#FF8FA0" opacity=".65"/>`;
+  if(o.mask)g+=`<path d="M${L+2} -64 L${L-10} -73 L${L-8} -59Z" fill="${INK}"/><rect x="${L+2}" y="-73" width="${w-4}" height="14" rx="7" fill="${INK}"/><ellipse cx="${-ex}" cy="-66" rx="4.6" ry="3.6" fill="#fff"/><ellipse cx="${ex}" cy="-66" rx="4.6" ry="3.6" fill="#fff"/><circle cx="${-ex+1.8}" cy="-66" r="2" fill="${INK}"/><circle cx="${ex+1.8}" cy="-66" r="2" fill="${INK}"/>`;
+  else if(m==='joy')g+=`<path d="M${-ex-4} -65 Q${-ex} -71 ${-ex+4} -65 M${ex-4} -65 Q${ex} -71 ${ex+4} -65" stroke="${INK}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+  else{g+=`<circle cx="${-ex}" cy="-66" r="3.6" fill="${INK}"/><circle cx="${ex}" cy="-66" r="3.6" fill="${INK}"/><circle cx="${-ex+1.2}" cy="-67.3" r="1.2" fill="#fff"/><circle cx="${ex+1.2}" cy="-67.3" r="1.2" fill="#fff"/>`;
+    if(m==='worried')g+=`<path d="M${-ex-4} -74 L${-ex+3} -71.5 M${ex+4} -74 L${ex-3} -71.5" stroke="${INK}" stroke-width="2" stroke-linecap="round"/>`}
+  const sm=o.mask?'sneaky':m;
+  g+=sm==='joy'?`<path d="M-8 -57 Q0 -45 8 -57Z" fill="#B23A4E" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round"/>`
+    :sm==='worried'?`<path d="M-5 -51 Q0 -56 5 -51" stroke="${INK}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`
+    :sm==='sneaky'?`<path d="M-6 -54 Q2 -50 8 -57" stroke="${INK}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`
+    :`<path d="M-7 -57 Q0 -50 7 -57" stroke="${INK}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+  if(o.crown)g+=`<path d="M-16 -84 L-19 -104 L-8 -93 L0 -108 L8 -93 L19 -104 L16 -84Z" fill="#F5B700" stroke="#C98A00" stroke-width="2" stroke-linejoin="round"/><circle cx="0" cy="-92" r="2.6" fill="#E0445A"/>`;
+  if(o.chef)g+=`<circle cx="-10" cy="-100" r="9" fill="#fff" stroke="${DK}"/><circle cx="10" cy="-100" r="9" fill="#fff" stroke="${DK}"/><circle cx="0" cy="-106" r="11" fill="#fff" stroke="${DK}"/><rect x="-14" y="-97" width="28" height="12" rx="2" fill="#fff" stroke="${DK}"/>`;
+  if(o.wiz)g+=`<path d="M-19 -84 L19 -84 L5 -122Z" fill="#5B37A0"/><polygon points="${star(2,-100,6,2.6)}" fill="#FFD43B"/>`;
+  if(o.party)g+=`<path d="M-12 -84 L12 -84 L0 -110Z" fill="#FFD43B" stroke="#E0A800" stroke-width="1.5"/><path d="M-6 -95 L6 -93 M-3 -103 L4 -102" stroke="#E0445A" stroke-width="2"/><circle cx="0" cy="-111" r="4" fill="#E0445A"/>`;
+  return g+'</g>';
+}
+const T=(x,y,s,sz=16,f=INK,a='middle')=>`<text x="${x}" y="${y}" font-size="${sz}" fill="${f}" text-anchor="${a}">${s}</text>`;
+const TH=(x,y,s,sz,f,halo)=>`<text x="${x}" y="${y}" font-size="${sz}" fill="${f}" text-anchor="middle" stroke="${halo}" stroke-width="7" stroke-linejoin="round" paint-order="stroke">${s}</text>`;
+function bub(x,y,w,h,lines,tx,ty,sz=13){const bx=Math.max(x+16,Math.min(x+w-16,tx)),down=ty>y+h,by=down?y+h:y,d=down?-2.5:2.5;
+  let s=`<polygon points="${bx-8},${by} ${bx+8},${by} ${tx},${ty}" fill="#fff" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="13" fill="#fff" stroke="${INK}" stroke-width="2"/><polygon points="${bx-6},${by+d} ${bx+6},${by+d} ${tx+(bx-tx)*.2},${ty+(by-ty)*.2}" fill="#fff"/>`;
+  const lh=sz*1.2,y0=y+h/2-(lines.length-1)*lh/2+sz*.35;lines.forEach((l,i)=>s+=T(x+w/2,(y0+i*lh).toFixed(1),l,sz));return s}
+function head(x2,y2,a,c,w){const hl=w*2.6,bx=x2-hl*Math.cos(a),by=y2-hl*Math.sin(a),p=a+Math.PI/2,hw=w*1.7;
+  return [bx,by,`<polygon points="${x2},${y2} ${(bx+hw*Math.cos(p)).toFixed(1)},${(by+hw*Math.sin(p)).toFixed(1)} ${(bx-hw*Math.cos(p)).toFixed(1)},${(by-hw*Math.sin(p)).toFixed(1)}" fill="${c}"/>`]}
+function arrow(x1,y1,x2,y2,c='#FF7A2F',w=5){const [bx,by,h]=head(x2,y2,Math.atan2(y2-y1,x2-x1),c,w);return `<line x1="${x1}" y1="${y1}" x2="${bx.toFixed(1)}" y2="${by.toFixed(1)}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`+h}
+function carrow(x1,y1,cx,cy,x2,y2,c='#FF7A2F',w=4){const [bx,by,h]=head(x2,y2,Math.atan2(y2-cy,x2-cx),c,w);return `<path d="M${x1} ${y1} Q${cx} ${cy} ${bx.toFixed(1)} ${by.toFixed(1)}" stroke="${c}" stroke-width="${w}" fill="none" stroke-linecap="round" stroke-dasharray="${w*1.8} ${w*1.4}"/>`+h}
+const spk=(x,y,r=7,c='#F5B700')=>`<polygon points="${star(x,y,r,r*.42)}" fill="${c}"/>`;
+const shd=(x,y,rx)=>`<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${(rx*.18).toFixed(1)}" fill="rgba(31,42,77,.13)"/>`;
+const heart=(cx,cy,z,c)=>`<path d="M${cx} ${cy+z} C${cx-z*2.2} ${cy-z*.4} ${cx-z*1.1} ${cy-z*2} ${cx} ${cy-z*.9} C${cx+z*1.1} ${cy-z*2} ${cx+z*2.2} ${cy-z*.4} ${cx} ${cy+z}Z" fill="${c}"/>`;
+const SC=(label,bg,inner)=>`<svg class="scene" viewBox="0 0 360 240" role="img" aria-label="${label}"><rect width="360" height="240" rx="18" fill="${bg}"/>${inner}</svg>`;
+const nest=(svg,x,y,w,h)=>svg.replace('<svg ',`<svg x="${x}" y="${y}" width="${w}" height="${h}" `);
+function bolt(x1,y1,x2,y2,c){const dx=x2-x1,dy=y2-y1,l=Math.hypot(dx,dy),px=-dy/l*6,py=dx/l*6;
+  return `<polyline points="${x1},${y1} ${(x1+dx*.4+px).toFixed(1)},${(y1+dy*.4+py).toFixed(1)} ${(x1+dx*.6-px).toFixed(1)},${(y1+dy*.6-py).toFixed(1)} ${x2},${y2}" fill="none" stroke="${c}" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>`}
+
+function scTen(){let s=T(180,36,'Ten Friends hold hands!',20);
+  [[1,9],[2,8],[3,7],[4,6],[5,5]].forEach(([a,b],i)=>{const cx=40+i*70;
+    s+=heart(cx,92,11,'#FF6B81')+T(cx,94,'10',10,'#fff')+shd(cx,176,32)+pal(a,{x:cx-17,y:176,s:.62,arms:'holdR',mood:'joy'})+pal(b,{x:cx+17,y:176,s:.62,arms:'holdL',mood:'joy'})+T(cx,204,`${a} + ${b}`,15)});
+  return SC('Five pairs of number friends holding hands, each pair makes 10','#FFF4EA',s+T(180,229,'Every pair makes 10',13,'#5B6683'))}
+const SCENES=[
+ ()=>SC('8 needs 2 to become a happy 10. 7 gives 2 and keeps 5.','#FFF4EA',
+   bub(8,12,124,46,['I need 2 to','be a 10!'],60,104)
+   +shd(62,200,28)+pal(8,{x:62,y:200,s:.95,mood:'worried',arms:'reachR'})
+   +shd(152,200,28)+pal(7,{x:152,y:200,s:.95,arms:'reachL'})
+   +carrow(140,112,112,86,82,108,'#FF7A2F',3.5)+T(112,82,'+2',17,'#D9560E')
+   +`<circle cx="100" cy="136" r="7" fill="#FFD43B" stroke="#C98A00" stroke-width="2"/><circle cx="115" cy="130" r="7" fill="#FFD43B" stroke="#C98A00" stroke-width="2"/>`
+   +arrow(186,150,224,150,'#FF7A2F',6)
+   +spk(226,70,6)+spk(306,66,6)+spk(214,116,5)
+   +shd(268,200,40)+pal(10,{x:268,y:200,s:1.15,mood:'joy',arms:'up',crown:1})
+   +shd(330,200,18)+pal(5,{x:330,y:200,s:.7,arms:'wave'})
+   +bub(214,10,126,46,["I'm a TEN!",'So happy!'],250,70)
+   +T(107,229,'8 + 7',20)+T(280,229,'10 + 5 = 15',20)),
+ ()=>SC('Captain Nine wears a 10 costume with one button missing','#EAF2FF',
+   shd(95,212,46)+pal(9,{x:95,y:212,s:1.55,mask:1,sign:'10',cape:'#2F80ED',arms:'hips'})
+   +bub(10,10,166,50,['Shh! I look like 10,',"but I'm really 9!"],100,76)
+   +`<rect x="186" y="68" width="162" height="132" rx="16" fill="#fff" stroke="#C9D8F2" stroke-width="2"/>`
+   +T(267,96,'47 + 9',22)+T(200,116,'Pretend 9 is 10:',11,'#5B6683','start')+T(267,136,'47 + 10 = 57',17)
+   +T(200,156,'Fix the missing button:',11,'#5B6683','start')+T(267,178,'57 − 1 = 56',17,'#1F7A50')
+   +arrow(180,220,115,184,'#E0445A',3)+T(186,226,'missing 1 button = −1',13,'#E0445A','start')),
+ ()=>SC('The Nine-Nine-Ten machine turns 37 into 63','#E6F7F4',
+   T(180,36,'100 − 37 = 63',22)
+   +`<line x1="185" y1="70" x2="185" y2="54" stroke="#0C7A72" stroke-width="3"/><circle cx="185" cy="50" r="6" fill="#FFD43B"/>`
+   +`<rect x="115" y="70" width="140" height="128" rx="18" fill="#13A89E" stroke="#0C7A72" stroke-width="3"/>`
+   +`<circle cx="160" cy="93" r="10" fill="#fff"/><circle cx="210" cy="93" r="10" fill="#fff"/><circle cx="162" cy="94" r="4.5" fill="${INK}"/><circle cx="212" cy="94" r="4.5" fill="${INK}"/><path d="M172 103 Q185 110 198 103" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>`
+   +`<rect x="128" y="111" width="114" height="18" rx="5" fill="#0C7A72"/>`+T(185,124,'NINE-NINE-TEN',11,'#fff')
+   +`<rect x="126" y="137" width="56" height="52" rx="8" fill="#fff"/><rect x="188" y="137" width="56" height="52" rx="8" fill="#fff"/>`
+   +T(154,154,'3 to 9',12,'#5B6683')+T(154,181,'6',24)+T(216,154,'7 to 10',12,'#5B6683')+T(216,181,'3',24)
+   +`<rect x="84" y="122" width="32" height="26" rx="4" fill="#0C7A72"/>`+T(100,116,'IN',12,'#0C7A72')
+   +shd(48,212,26)+pal(37,{x:48,y:212,s:.8,arms:'reachR',col:'#4DABF7'})
+   +carrow(56,136,64,108,82,126,'#0C7A72',3)
+   +`<rect x="255" y="150" width="30" height="26" rx="4" fill="#0C7A72"/>`+T(270,144,'OUT',12,'#0C7A72')
+   +spk(292,118,6)+spk(350,124,6)+shd(318,212,26)+pal(63,{x:318,y:212,s:.8,mood:'joy',arms:'up',col:'#FF922B'})),
+ ()=>SC('The Nines Twins: 23 times 99 makes 22 and 77','#F3ECFF',
+   T(180,34,'23 × 99',22)
+   +shd(66,126,18)+pal(23,{x:66,y:126,s:.62,col:'#B197FC'})
+   +arrow(74,134,100,154,'#9B5DE5',3)+T(50,168,'one less',13,'#5B37A0')
+   +shd(130,210,32)+pal(22,{x:130,y:210,s:1.05,col:'#9B5DE5',arms:'holdR',party:1,mood:'joy'})
+   +shd(232,210,32)+pal(77,{x:232,y:210,s:1.05,col:'#9B5DE5',arms:'holdL',party:1,mood:'joy'})
+   +heart(181,160,8,'#FF6B81')
+   +bub(262,44,92,46,['I fill up','to 99!'],246,96)+T(314,150,'22 + 77 = 99',12,'#5B6683')
+   +T(180,234,'23 × 99 = 2277',20)),
+ ()=>SC('8 is 2 steps from home 10 and 7 is 3 steps. Cross: 8 minus 3 is 5. Down: 2 times 3 is 6.','#FFECEE',
+   `<rect x="12" y="36" width="136" height="184" rx="14" fill="#fff" stroke="#F3C2C9" stroke-width="2"/>`
+   +T(80,60,'8 × 7',17)+T(52,98,'8',28)+T(112,98,'−2',24,'#5B6683')+T(52,140,'7',28)+T(112,140,'−3',24,'#5B6683')
+   +`<line x1="62" y1="90" x2="96" y2="126" stroke="#E0445A" stroke-width="3" stroke-linecap="round"/><line x1="62" y1="126" x2="96" y2="90" stroke="#E0445A" stroke-width="2.5" stroke-dasharray="4 4" opacity=".45"/>`
+   +`<line x1="26" y1="154" x2="134" y2="154" stroke="${INK}" stroke-width="2"/>`
+   +T(52,186,'5',28,'#E0445A')+T(82,184,'|',24,'#AEB59A')+T(112,186,'6',28,'#2F80ED')
+   +T(52,206,'8 − 3',11,'#5B6683')+T(112,206,'2 × 3',11,'#5B6683')
+   +`<polygon points="278,112 317,70 357,112" fill="#E0445A"/><rect x="285" y="110" width="64" height="98" fill="#FFD8A8" stroke="#E2A867" stroke-width="2"/><rect x="305" y="162" width="24" height="46" rx="3" fill="#B9803A"/><circle cx="317" cy="134" r="14" fill="#fff" stroke="#E2A867" stroke-width="2"/>`
+   +T(317,140,'10',15)+T(317,62,'HOME',13,'#E0445A')
+   +`<line x1="176" y1="141" x2="284" y2="141" stroke="#E7A9B2" stroke-width="2" stroke-dasharray="5 5"/><line x1="176" y1="213" x2="284" y2="213" stroke="#E7A9B2" stroke-width="2" stroke-dasharray="5 5"/>`
+   +[232,262].map((x,k)=>`<circle cx="${x}" cy="134" r="9" fill="#FFC2CB"/>`+T(x,138,k+1,11)).join('')
+   +[212,238,264].map((x,k)=>`<circle cx="${x}" cy="206" r="9" fill="#FFC2CB"/>`+T(x,210,k+1,11)).join('')
+   +T(247,116,'2 steps',12,'#E0445A')+T(238,188,'3 steps',12,'#E0445A')
+   +shd(190,141,16)+pal(8,{x:190,y:141,s:.62,mood:'joy'})+shd(180,213,16)+pal(7,{x:180,y:213,s:.62})),
+ ()=>SC('Chef Eleven makes a 23 times 11 sandwich: bread 2, filling 5, bread 3','#FFF6DE',
+   shd(62,212,30)+pal(11,{x:62,y:212,s:1,col:'#FF922B',chef:1,mood:'joy',arms:'wave'})
+   +bub(10,12,128,46,['23 × 11?','Coming up!'],66,90)
+   +T(240,72,'2 + 3',15,'#5B6683')+arrow(240,78,240,94,'#5B6683',2.5)
+   +`<path d="M197 100 H167 a30 32 0 0 0 0 64 H197 Z" fill="#E8B067" stroke="#B9803A" stroke-width="3"/>`
+   +`<rect x="197" y="100" width="86" height="64" fill="#FFE08A"/><path d="M197 100 h86 v12 q-7 6 -14 0 t-14 0 t-14 0 t-15 0 t-14 0 t-15 0 z" fill="#69DB7C"/><rect x="197" y="118" width="86" height="12" fill="#FF6B6B"/><path d="M197 164 h86 v-10 q-7 -6 -14 0 t-14 0 t-14 0 t-15 0 t-14 0 t-15 0 z" fill="#69DB7C"/>`
+   +`<circle cx="240" cy="139" r="17" fill="#fff" stroke="#E0A800" stroke-width="2"/>`+T(240,148,'5',24)
+   +`<path d="M283 100 H313 a30 32 0 0 1 0 64 H283 Z" fill="#E8B067" stroke="#B9803A" stroke-width="3"/>`
+   +T(176,145,'2',30)+T(304,145,'3',30)
+   +T(176,186,'bread',12,'#5B6683')+T(240,186,'filling',12,'#5B6683')+T(304,186,'bread',12,'#5B6683')
+   +T(240,222,'23 × 11 = 253',22)),
+ ()=>SC('3 rides the One-More Lift to floor 4. 3 times 4 is 12, with a 25 cherry on top','#E5F6FD',
+   `<rect x="20" y="28" width="104" height="190" rx="6" fill="#CFE8F6" stroke="#5BA8CF" stroke-width="2"/><rect x="52" y="30" width="68" height="186" fill="#E8F4FB"/>`
+   +[74,120,166].map(y=>`<line x1="20" y1="${y}" x2="124" y2="${y}" stroke="#5BA8CF" stroke-width="2"/>`).join('')
+   +[[5,51],[4,97],[3,143],[2,192]].map(([f,y])=>`<circle cx="36" cy="${y}" r="10" fill="${f===4?'#F5B700':'#fff'}" stroke="#5BA8CF" stroke-width="1.5"/>`+T(36,y+5,f,13)).join('')
+   +`<rect x="58" y="125" width="56" height="38" rx="6" fill="none" stroke="#5BA8CF" stroke-width="2" stroke-dasharray="4 4"/>`
+   +arrow(86,156,86,124,'#FF7A2F',3)
+   +`<rect x="58" y="79" width="56" height="38" rx="6" fill="#fff" stroke="${INK}" stroke-width="2"/>`+pal(3,{x:86,y:115,s:.4,mood:'joy',arms:'up'})
+   +T(186,62,'3 rides up',14)+T(186,80,'one floor to 4',14)+T(186,136,'3 × 4 = 12',19)
+   +T(288,44,'35 × 35',22)
+   +`<ellipse cx="288" cy="206" rx="56" ry="8" fill="#DCE3EC"/><rect x="244" y="146" width="88" height="58" rx="10" fill="#FFB4C2" stroke="#E07A8F" stroke-width="2"/><rect x="244" y="146" width="88" height="14" rx="7" fill="#fff"/><circle cx="258" cy="160" r="4" fill="#fff"/><circle cx="286" cy="161" r="5" fill="#fff"/><circle cx="314" cy="160" r="4" fill="#fff"/>`
+   +T(288,192,'12',28)+`<path d="M288 114 q4 -14 14 -18" stroke="#2E9E6B" stroke-width="3" fill="none"/><circle cx="288" cy="128" r="16" fill="#E0445A"/>`+T(288,133,'25',13,'#fff')+spk(318,112,6)
+   +T(288,232,'12 and 25 make 1225',14)),
+ ()=>SC('The Lightning Ninja strikes down, cross, down to find 21 times 13 is 273','#E8F6EE',
+   nest(ninja({eq:['headband','staff'],gi:S.gi,belt:S.belt}),4,44,112,140)
+   +bub(8,8,152,34,['Down! Cross! Down!'],62,56)
+   +bolt(285,98,285,138,'#F5B700')+bolt(234,98,276,138,'#E0445A')+bolt(276,98,234,138,'#E0445A')+bolt(225,98,225,138,'#2F80ED')
+   +TH(225,88,'2',34,INK,'#E8F6EE')+TH(285,88,'1',34,INK,'#E8F6EE')+T(186,170,'×',28)+TH(225,170,'1',34,INK,'#E8F6EE')+TH(285,170,'3',34,INK,'#E8F6EE')
+   +`<circle cx="310" cy="118" r="10" fill="#F5B700"/><circle cx="255" cy="118" r="10" fill="#fff" stroke="#E0445A" stroke-width="2.5"/><circle cx="200" cy="118" r="10" fill="#2F80ED"/>`
+   +T(310,123,'1',13,'#fff')+T(255,123,'2',13,'#E0445A')+T(200,123,'3',13,'#fff')
+   +`<line x1="160" y1="180" x2="310" y2="180" stroke="${INK}" stroke-width="2.5"/>`
+   +T(165,214,'2',34,'#2F80ED')+T(225,214,'7',34,'#E0445A')+T(285,214,'3',34,'#C98A00')
+   +T(236,234,'21 × 13 = 273',15,'#5B6683')),
+ ()=>SC('58 jumps into the magic pot and comes out as magic number 4. Nines are invisible ghosts.','#F1EAFB',
+   T(180,32,'Magic number of 58',18)
+   +shd(58,208,26)+pal(58,{x:58,y:208,s:.82,mood:'joy',arms:'up',col:'#4DABF7'})
+   +carrow(82,126,112,70,146,122,'#9B5DE5',3.5)
+   +`<path d="M118 142 Q122 214 180 214 Q238 214 242 142Z" fill="#3B3355"/><ellipse cx="180" cy="142" rx="64" ry="12" fill="#4E4570"/><ellipse cx="180" cy="141" rx="55" ry="8" fill="#8BE0B4"/><circle cx="160" cy="128" r="6" fill="#B9F2D6"/><circle cx="184" cy="120" r="8" fill="#B9F2D6"/><circle cx="204" cy="130" r="5" fill="#B9F2D6"/>`
+   +T(180,176,'5 + 8 = 13',14,'#fff')+T(180,198,'1 + 3 = 4',14,'#FFD43B')
+   +carrow(214,124,240,98,258,96,'#9B5DE5',3)
+   +spk(248,62,6,'#FFD43B')+spk(316,56,6,'#FFD43B')+spk(316,100,5,'#FFD43B')
+   +pal(4,{x:282,y:114,s:.68,mood:'joy',arms:'up',wiz:1})+T(298,142,'magic number 4',13,'#5B37A0')
+   +`<path d="M300 214 V176 a20 20 0 0 1 40 0 V214 l-6.7 -7 -6.6 7 -6.7 -7 -6.7 7 -6.6 -7 -6.7 7Z" fill="#fff" opacity=".8" stroke="#B7A9D6" stroke-width="2" stroke-dasharray="4 3"/>`
+   +`<ellipse cx="313" cy="180" rx="2.6" ry="3.6" fill="${INK}" opacity=".5"/><ellipse cx="327" cy="180" rx="2.6" ry="3.6" fill="${INK}" opacity=".5"/>`+T(320,204,'9',18,'#B7A9D6')
+   +T(352,232,'Boo! 9 is invisible',11,'#7A4FC0','end')),
+ ()=>SC('Your ninja wins the tournament while number friends cheer','#FFF3D6',
+   T(180,30,'BLACK BELT TOURNAMENT',17)
+   +[[60,60,'#FF6B6B'],[300,56,'#4DABF7'],[30,110,'#20C997'],[338,104,'#DA77F2'],[96,44,'#FCC419'],[262,82,'#FF922B'],[124,96,'#748FFC'],[236,130,'#51CF66']].map(([x,y,c],k)=>`<rect x="${x}" y="${y}" width="7" height="4" rx="1" fill="${c}" transform="rotate(${k*37} ${x} ${y})"/>`).join('')
+   +`<rect x="140" y="150" width="80" height="68" rx="4" fill="#F5B700"/><rect x="72" y="176" width="68" height="42" rx="4" fill="#CFD6E2"/><rect x="220" y="182" width="68" height="36" rx="4" fill="#E9A86A"/>`
+   +T(180,194,'1',26,'#fff')+T(106,206,'2',20,'#fff')+T(254,208,'3',20,'#fff')
+   +nest(ninja({eq:S.eq,gi:S.gi,belt:S.belt}),132,44,96,120)
+   +pal(10,{x:106,y:176,s:.62,crown:1,mood:'joy',arms:'up'})+pal(9,{x:254,y:182,s:.62,mask:1,arms:'up'})
+   +pal(11,{x:34,y:218,s:.55,chef:1,arms:'wave',col:'#FF922B'})+pal(5,{x:326,y:218,s:.55,arms:'up',mood:'joy'}))
+];
+function scCheck(){const row=(y,nums,ops,mag,ok)=>{let o='';nums.forEach((n,k)=>{const x=[44,112,186][k];o+=T(x,y,n,24)+`<circle cx="${x}" cy="${y+26}" r="13" fill="${k===2&&!ok?'#FFE4E8':'#EDE4FF'}" stroke="${k===2&&!ok?'#E0445A':'#9B5DE5'}" stroke-width="2"/>`+T(x,y+31,mag[k],15,k===2&&!ok?'#E0445A':'#5B37A0')});
+    o+=T(78,y,'+',22)+T(150,y,'=',22)+T(78,y+31,'+',16,'#5B37A0')+T(150,y+31,ok?'=':'≠',16,ok?'#5B37A0':'#E0445A');
+    o+=`<rect x="212" y="${y-4}" width="78" height="30" rx="15" fill="${ok?'#DDF5E8':'#FFE4E8'}"/>`+T(251,y+16,ok?'Right ✓':'Mistake!',14,ok?'#1F7A50':'#E0445A');return o};
+  return SC('Detective check: 12 plus 13 equals 25 has magic numbers 3 plus 4 equals 7, a match. 26 has magic number 8, a mistake.','#F4EEFF',
+    T(180,28,'Detective check',18)+T(180,46,'magic numbers go in the circles',11,'#5B6683')
+    +row(78,['12','13','25'],0,['3','4','7'],true)+`<line x1="20" y1="134" x2="310" y2="134" stroke="#D9CCF5" stroke-width="2" stroke-dasharray="5 5"/>`
+    +row(168,['12','13','26'],0,['3','4','8'],false)
+    +pal(7,{x:332,y:226,s:.55,mood:'joy',arms:'reachL',col:'#9B5DE5'})+`<circle cx="306" cy="190" r="9" fill="#E3F4FF" stroke="${INK}" stroke-width="2.5"/><line x1="312" y1="197" x2="318" y2="204" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`)}
+/* ---------- picture stories for the new sutras ---------- */
+const bx=(x,y,w,h,t,fill,sz=18,f=INK)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="9" fill="${fill}"/>`+T(x+w/2,y+h/2+sz*.36,t,sz,f);
+const apple=(x,y,r=15)=>`<path d="M${x} ${y-r+3} q2 -9 8 -12" stroke="#7A4A1E" stroke-width="3" fill="none"/><ellipse cx="${x+7}" cy="${y-r-3}" rx="6" ry="3" fill="#51CF66" transform="rotate(-25 ${x+7} ${y-r-3})"/><circle cx="${x}" cy="${y}" r="${r}" fill="#E0445A"/><ellipse cx="${x-5}" cy="${y-5}" rx="4" ry="6" fill="#fff" opacity=".35"/>`;
+const banana=(x,y)=>`<path d="M${x-18} ${y-12} Q${x-12} ${y+18} ${x+18} ${y+6} Q${x+10} ${y+4} ${x} ${y} Q${x-10} ${y-4} ${x-14} ${y-14}Z" fill="#FFD43B" stroke="#E0A800" stroke-width="2" stroke-linejoin="round"/>`;
+const flag=(x,y,t)=>`<line x1="${x}" y1="${y}" x2="${x}" y2="${y-90}" stroke="#7A4A1E" stroke-width="4"/><path d="M${x} ${y-90} L${x+44} ${y-76} L${x} ${y-62}Z" fill="#E0445A"/>`+T(x+16,y-71,t,13,'#fff');
+const stepDot=(x,y,n)=>`<circle cx="${x}" cy="${y}" r="9" fill="#FFC2CB"/>`+T(x,y+4,n,11);
+function lineScene(label,bg,title,n,base,gap,above,lines){
+  const fx=above?150:322,step=24,px=above?fx+step*gap+40:fx-step*gap-40;
+  let s=`<rect x="12" y="34" width="124" height="184" rx="14" fill="#fff"/>`+T(74,62,title,17);
+  lines.forEach((l,i)=>s+=T(74,96+i*30,l[0],l[1]||15,l[2]||INK));
+  s+=`<line x1="146" y1="200" x2="352" y2="200" stroke="#C8B79A" stroke-width="3"/>`+flag(fx,200,base);
+  for(let k=1;k<=gap;k++)s+=stepDot(above?fx+k*step-6:fx-k*step+6,190,k);
+  s+=T(above?fx+step*gap/2+6:fx-step*gap/2-6,98,`${gap} step${gap>1?'s':''} ${above?'above':'below'}`,11,'#E0445A');
+  s+=shd(px,200,18)+pal(n,{x:px,y:200,s:.62,mood:'joy'});
+  return SC(label,bg,s)}
+
+const NEWSCENES={
+ look:()=>SC('A look-out owl with a telescope sees easy answers','#EAF6FF',
+   T(180,30,'Just look!',22)
+   +`<line x1="16" y1="206" x2="140" y2="206" stroke="#8C6239" stroke-width="7" stroke-linecap="round"/>`
+   +`<path d="M44 112 L50 130 L58 116Z M96 112 L90 130 L82 116Z" fill="#8C5A35"/><ellipse cx="70" cy="160" rx="34" ry="44" fill="#B07A4F"/><ellipse cx="70" cy="174" rx="22" ry="27" fill="#F3D9B1"/>`
+   +`<circle cx="58" cy="140" r="12" fill="#fff"/><circle cx="82" cy="140" r="12" fill="#fff"/><circle cx="60" cy="141" r="5.5" fill="${INK}"/><circle cx="84" cy="141" r="5.5" fill="${INK}"/><path d="M66 150 L74 150 L70 158Z" fill="#F5A300"/><path d="M58 202 l-4 6 M62 202 l0 7 M78 202 l0 7 M82 202 l4 6" stroke="#F5A300" stroke-width="3" stroke-linecap="round"/>`
+   +`<line x1="92" y1="140" x2="132" y2="116" stroke="#5B6683" stroke-width="11" stroke-linecap="round"/><circle cx="134" cy="115" r="8" fill="#A5D8FF" stroke="#5B6683" stroke-width="3"/>`
+   +`<rect x="152" y="50" width="196" height="160" rx="14" fill="#fff" stroke="#BFDFF5" stroke-width="2"/>`
+   +[['357 × 0 = 0',86],['48 × 1 = 48',120],['999 + 1 = 1000',154],['25 − 25 = 0',188]].map(([t,y])=>T(240,y,t,17)+T(330,y,'✓',17,'#2E9E6B')).join('')),
+ parts:()=>SC('47 splits into 40 and 7, 38 into 30 and 8, joined to make 85','#FFF4E6',
+   T(180,58,'47 + 38',20)+shd(76,104,20)+pal(47,{x:76,y:104,s:.62,col:'#FF922B',mood:'joy'})+shd(284,104,20)+pal(38,{x:284,y:104,s:.62,col:'#4DABF7',mood:'joy'})
+   +arrow(66,110,52,128,'#FF922B',2.5)+arrow(86,110,106,128,'#FF922B',2.5)+arrow(274,110,256,128,'#4DABF7',2.5)+arrow(294,110,312,128,'#4DABF7',2.5)
+   +bx(26,130,52,32,'40','#FFD8A8')+bx(90,130,40,32,'7','#D3F9D8')+bx(228,130,52,32,'30','#FFD8A8')+bx(294,130,40,32,'8','#D3F9D8')
+   +T(108,190,'tens: 40 + 30 = 70',14,'#C2410C')+T(270,190,'ones: 7 + 8 = 15',14,'#2B8A3E')
+   +T(180,226,'whole: 70 + 15 = 85',18)),
+ bridge:()=>SC('7 jumps over the equals bridge and its plus flips to minus','#E9F7EF',
+   T(180,32,'□ + 7 = 15',22)
+   +`<path d="M0 176 H360 V240 H0Z" fill="#9BD3F5"/><path d="M0 176 Q20 170 40 176 T80 176 T120 176 T160 176 T200 176 T240 176 T280 176 T320 176 T360 176" fill="none" stroke="#fff" stroke-width="2" opacity=".7"/>`
+   +`<path d="M0 168 H130 V240 H0Z M230 168 H360 V240 H230Z" fill="#8CE99A"/>`
+   +`<path d="M126 170 Q180 106 234 170" fill="none" stroke="#B9803A" stroke-width="12" stroke-linecap="round"/>`+T(180,152,'=',30,'#7A4A1E')
+   +bx(40,130,64,32,'+ 7','#51CF66',18,'#fff')+bx(256,130,64,32,'− 7','#E0445A',18,'#fff')
+   +T(72,122,'before the bridge',11,'#2B8A3E')+T(288,122,'after the bridge',11,'#C92A2A')
+   +pal(7,{x:180,y:116,s:.6,mood:'joy',arms:'up'})+`<path d="M150 104 l-10 -4 M150 92 l-12 0 M210 104 l10 -4 M210 92 l12 0" stroke="#5B6683" stroke-width="2" stroke-linecap="round"/>`
+   +T(180,224,'□ = 15 − 7 = 8',20)),
+ cancel:()=>SC('A balance scale with 6 plus 9 on one side and box plus 9 on the other. The 9s cancel.','#FFF0F6',
+   T(180,32,'6 + 9 = □ + 9',22)
+   +`<path d="M160 228 L200 228 L180 208Z" fill="#868E96"/><line x1="180" y1="210" x2="180" y2="76" stroke="#868E96" stroke-width="6"/><line x1="64" y1="78" x2="296" y2="78" stroke="${INK}" stroke-width="6" stroke-linecap="round"/><circle cx="180" cy="76" r="7" fill="${INK}"/>`
+   +`<path d="M90 78 L46 160 M90 78 L134 160 M270 78 L226 160 M270 78 L314 160" stroke="#868E96" stroke-width="2"/><path d="M40 160 Q90 184 140 160Z M220 160 Q270 184 320 160Z" fill="#CED4DA"/>`
+   +pal(6,{x:68,y:160,s:.52})+`<g opacity=".4">${pal(9,{x:112,y:160,s:.52,arms:'wave'})}</g>`
+   +`<rect x="234" y="124" width="30" height="34" rx="6" fill="#fff" stroke="${INK}" stroke-width="2.5"/>`+T(249,148,'?',20)+`<g opacity=".4">${pal(9,{x:292,y:160,s:.52,arms:'wave'})}</g>`
+   +`<path d="M98 112 L126 140 M126 112 L98 140 M278 112 L306 140 M306 112 L278 140" stroke="#E0445A" stroke-width="4" stroke-linecap="round"/>`
+   +T(96,204,'the 9s cancel',13,'#E0445A')+T(270,204,'□ = 6',20)),
+ sumdiff:()=>SC('A tall 9 and a short 5 together make 14 with a difference of 4','#EEF2FF',
+   T(126,30,'Tall and short twins',17)
+   +shd(80,212,30)+pal(9,{x:80,y:212,s:1.1,col:'#5C7CFA',mood:'joy'})+shd(170,212,20)+pal(5,{x:170,y:212,s:.7,col:'#91A7FF',mood:'joy'})
+   +`<line x1="112" y1="117" x2="216" y2="117" stroke="#5C7CFA" stroke-width="2" stroke-dasharray="4 4"/><line x1="190" y1="152" x2="216" y2="152" stroke="#5C7CFA" stroke-width="2" stroke-dasharray="4 4"/>`
+   +arrow(212,150,212,121,'#E0445A',2.5)+T(222,140,'4',14,'#E0445A','start')
+   +`<rect x="238" y="46" width="114" height="166" rx="14" fill="#fff"/>`
+   +T(295,74,'together 14',14)+T(295,98,'difference 4',14,'#E0445A')+T(295,132,'(14 + 4) ÷ 2',13,'#5B6683')+T(295,152,'= 9 tall',15)+T(295,180,'(14 − 4) ÷ 2',13,'#5B6683')+T(295,200,'= 5 short',15)),
+ steps:()=>SC('A frog jumps plus 4 on stones 3, 7, 11, 15 and next lands on 19','#E8F8F5',
+   T(180,30,'+ 4 every jump',20)+`<path d="M0 160 H360 V240 H0Z" fill="#99E9F2"/>`
+   +[[40,'3'],[110,'7'],[180,'11'],[250,'15'],[320,'?']].map(([x,t],k)=>`<ellipse cx="${x}" cy="176" rx="30" ry="12" fill="${k===4?'#FFE066':'#ADB5BD'}"/>`+T(x,182,t,17)).join('')
+   +[40,110,180].map(x=>carrow(x,160,x+35,112,x+66,158,'#0CA678',3)+T(x+35,124,'+4',13,'#0B7285')).join('')
+   +carrow(250,160,272,120,286,108,'#0CA678',3)
+   +`<g transform="translate(298 98)"><ellipse cx="0" cy="0" rx="20" ry="14" fill="#51CF66"/><circle cx="-8" cy="-12" r="7" fill="#51CF66"/><circle cx="8" cy="-12" r="7" fill="#51CF66"/><circle cx="-8" cy="-13" r="3" fill="${INK}"/><circle cx="8" cy="-13" r="3" fill="${INK}"/><path d="M-8 2 Q0 8 8 2" stroke="${INK}" stroke-width="2" fill="none"/></g>`
+   +T(180,224,'15 + 4 = 19',18)),
+ fruits:()=>SC('Two apples make 10 so one apple is 5. Apple plus banana is 9 so the banana is 4.','#FFF9E6',
+   apple(46,70)+T(78,77,'+',22)+apple(110,70)+T(166,77,'= 10',22)+T(236,77,'→',22,'#F08C00')+apple(278,70)+T(320,77,'= 5',20,'#2E9E6B')
+   +`<line x1="20" y1="108" x2="340" y2="108" stroke="#FFE8A1" stroke-width="2" stroke-dasharray="5 5"/>`
+   +T(180,128,'keep 🍎 = 5 and use it below',12,'#5B6683')
+   +apple(46,166)+T(78,173,'+',22)+banana(110,166)+T(166,173,'= 9',22)+T(236,173,'→',22,'#F08C00')+banana(278,166)+T(320,173,'= 4',20,'#2E9E6B')
+   +T(180,224,'Hide one, keep one!',16)),
+ zeros:()=>SC('3 and 4 shake hands to make 12 while two zero balloons float to the end','#F3F0FF',
+   T(180,30,'30 × 40 = 1200',20)
+   +shd(118,206,26)+pal(3,{x:118,y:206,s:.95,arms:'holdR',mood:'joy'})+shd(196,206,26)+pal(4,{x:196,y:206,s:.95,arms:'holdL',mood:'joy'})
+   +bub(96,52,124,32,['3 × 4 = 12'],156,108,15)
+   +[[282,86,'#FF8787'],[326,70,'#74C0FC']].map(([x,y,c])=>`<path d="M${x} ${y+24} Q${x-6} ${y+70} ${x+4} ${y+118}" stroke="#868E96" stroke-width="1.5" fill="none"/><ellipse cx="${x}" cy="${y}" rx="20" ry="24" fill="${c}"/><path d="M${x-4} ${y+23} L${x+4} ${y+23} L${x} ${y+29}Z" fill="${c}"/>`+T(x,y+7,'0',20,'#fff')).join('')
+   +T(350,226,'zeros join at the end',11,'#5B6683','end')),
+ split:()=>SC('13 splits into 10 and 3. 7 times 10 is 70, 7 times 3 is 21, together 91.','#EAF6FF',
+   T(180,30,'7 × 13',20)
+   +shd(70,204,24)+pal(13,{x:70,y:204,s:.95,col:'#1C7ED6',mood:'joy'})+`<line x1="70" y1="112" x2="70" y2="204" stroke="#E0445A" stroke-width="2.5" stroke-dasharray="5 4"/>`
+   +arrow(104,140,148,96,'#1C7ED6',3)+arrow(104,160,148,176,'#1C7ED6',3)
+   +bx(152,76,52,36,'10','#D0EBFF',20)+bx(152,158,52,36,'3','#D0EBFF',20)
+   +T(280,100,'7 × 10 = 70',17)+T(280,182,'7 × 3 = 21',17)
+   +T(250,226,'70 + 21 = 91',18,'#1C7ED6')),
+ box:()=>SC('A box splits 12 times 13 into 100, 30, 20 and 6','#FFF4E6',
+   T(62,40,'12 × 13',20)+pal(12,{x:56,y:206,s:.62,mood:'joy',col:'#E8590C'})
+   +T(185,64,'10',16,'#C2410C')+T(275,64,'3',16,'#C2410C')+T(116,120,'10',16,'#1C7ED6')+T(116,190,'2',16,'#1C7ED6')
+   +bx(130,72,110,88,'100','#FFD8A8',22)+bx(244,72,62,88,'30','#C3FAE8',20)+bx(130,164,110,46,'20','#D0EBFF',20)+bx(244,164,62,46,'6','#FFDEEB',20)
+   +T(232,230,'100 + 30 + 20 + 6 = 156',15)),
+ lastdig:()=>SC('A detective looks only at the last digits 7 and 6 to see the answer ends in 2','#F1F3F5',
+   T(108,52,'3',30)+T(126,52,'7',30,'#E0445A')+T(160,50,'×',26)+T(192,52,'4',30)+T(210,52,'6',30,'#E0445A')+T(246,50,'= ?',26)
+   +`<circle cx="126" cy="42" r="16" fill="none" stroke="#E0445A" stroke-width="2.5"/><circle cx="210" cy="42" r="16" fill="none" stroke="#E0445A" stroke-width="2.5"/>`
+   +T(180,96,'7 × 6 = 42, so it ends in 2',15)
+   +[['1701',0],['1702',1],['1704',0],['1708',0]].map(([t,ok],k)=>bx(24+k*80,118,70,36,t,ok?'#D3F9D8':'#fff',17,ok?'#2B8A3E':INK)+(ok?T(59+k*80+0,174,'✓',18,'#2B8A3E'):'')).join('')
+   +pal(2,{x:300,y:228,s:.5,mood:'joy',arms:'reachL',col:'#868E96'})+`<circle cx="274" cy="200" r="9" fill="#E3F4FF" stroke="${INK}" stroke-width="2.5"/><line x1="280" y1="207" x2="286" y2="213" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`),
+ base20:()=>SC('22 and 23 live just past house 20. Cross 25, double it, add 6: 506','#FFF0F6',
+   `<polygon points="14,104 52,66 90,104" fill="#E0445A"/><rect x="20" y="102" width="64" height="96" fill="#FFD8A8" stroke="#E2A867" stroke-width="2"/><circle cx="52" cy="128" r="15" fill="#fff" stroke="#E2A867" stroke-width="2"/>`+T(52,133,'20',14)+`<rect x="42" y="160" width="20" height="38" rx="3" fill="#B9803A"/>`+T(52,58,'HOME 20',12,'#E0445A')
+   +stepDot(102,142,1)+stepDot(124,142,2)+shd(154,152,14)+pal(22,{x:154,y:152,s:.5,mood:'joy',col:'#F06595'})
+   +stepDot(102,200,1)+stepDot(124,200,2)+stepDot(146,200,3)+shd(178,208,14)+pal(23,{x:178,y:208,s:.5,col:'#D6336C'})
+   +`<rect x="206" y="34" width="146" height="186" rx="14" fill="#fff"/>`
+   +T(250,66,'22',24)+T(312,66,'+2',20,'#5B6683')+T(250,100,'23',24)+T(312,100,'+3',20,'#5B6683')
+   +`<line x1="268" y1="58" x2="298" y2="88" stroke="#E0445A" stroke-width="2.5"/><line x1="222" y1="114" x2="336" y2="114" stroke="${INK}" stroke-width="2"/>`
+   +T(250,144,'25',24,'#E0445A')+T(282,142,'|',22,'#AEB59A')+T(312,144,'6',24,'#2F80ED')
+   +T(279,172,'25 × 2 = 50 tens',12,'#5B6683')+T(279,202,'500 + 6 = 506',16)),
+ twelve:()=>SC('Coach Twelve: double each digit and add the neighbour. 23 times 12 is 276.','#E8F6EE',
+   shd(58,214,30)+pal(12,{x:58,y:214,s:1,col:'#0CA678',mood:'joy',arms:'wave',party:1})
+   +bub(8,8,196,38,['Double, then grab','your neighbour!'],64,104,12)
+   +T(286,30,'23 × 12',18)+T(238,84,'2',34)+T(290,84,'3',34)
+   +arrow(290,92,290,128,'#0CA678',2.5)+arrow(282,90,250,128,'#0CA678',2.5)+arrow(238,92,240,128,'#0CA678',2.5)+arrow(230,90,206,128,'#0CA678',2.5)
+   +bx(188,132,36,40,'2','#fff',22)+bx(226,132,36,40,'7','#fff',22)+bx(272,132,36,40,'6','#fff',22)
+   +T(206,192,'front',10,'#5B6683')+T(244,192,'2×2+3',10,'#5B6683')+T(290,192,'2×3',10,'#5B6683')
+   +T(248,226,'= 276',20)),
+ hug10:()=>SC('43 and 47 hug because 3 and 7 make 10. 4 times 5 is 20, 3 times 7 is 21: 2021.','#FFF0F6',
+   T(180,32,'43 × 47',20)
+   +shd(120,200,30)+pal(43,{x:120,y:200,s:1,arms:'holdR',mood:'joy',col:'#FF8787'})+shd(230,200,30)+pal(47,{x:230,y:200,s:1,arms:'holdL',mood:'joy',col:'#748FFC'})
+   +heart(175,152,10,'#FF6B81')+T(175,128,'3 + 7 = 10',12,'#E0445A')
+   +T(180,226,'4 × 5 = 20 and 3 × 7 = 21 → 2021',14)),
+ sq10:()=>lineScene('8 is 2 steps below home 10. 8 minus 2 is 6, 2 times 2 is 4: 64','#FFF4E6','8 × 8',8,'10',2,false,[['8 − 2 = 6'],['2 × 2 = 4'],['= 64',22,'#E8590C']]),
+ sq100:()=>lineScene('96 is 4 steps below home 100. 96 minus 4 is 92, 4 times 4 is 16: 9216','#FFF4E6','96 × 96',96,'100',4,false,[['96 − 4 = 92'],['4 × 4 = 16'],['= 9216',22,'#E8590C']]),
+ squp:()=>lineScene('13 is 3 steps above home 10. 13 plus 3 is 16, 3 times 3 is 9: 169','#FFF9DB','13 × 13',13,'10',3,true,[['13 + 3 = 16'],['3 × 3 = 9'],['= 169',22,'#E67700']]),
+ seven143:()=>SC('143 and 7 high five and make 1001','#F3F0FF',
+   T(130,30,'143 × 7 = 1001',20)
+   +shd(80,210,30)+pal(143,{x:80,y:210,s:.85,arms:'wave',mood:'joy',col:'#9C36B5'})+shd(168,210,22)+pal(7,{x:168,y:210,s:.85,arms:'up',mood:'joy'})
+   +spk(130,100,8)+`<polygon points="${star(286,96,62,40)}" fill="#FFD43B" stroke="#F08C00" stroke-width="3"/>`+T(286,104,'1001',24,'#C92A2A')
+   +spk(232,40,6)+spk(344,150,6)
+   +T(290,198,'143 × 14 = 2002',13)+T(290,222,'143 × 21 = 3003',13)),
+ lastrem:()=>SC('A number train 347. Only the last carriage 7 matters for leftovers.','#E7F5FF',
+   T(180,30,'Only the last carriage matters!',16)
+   +`<line x1="10" y1="150" x2="350" y2="150" stroke="#868E96" stroke-width="4"/>`
+   +`<circle cx="44" cy="74" r="8" fill="#DEE2E6"/><circle cx="56" cy="60" r="10" fill="#DEE2E6"/><rect x="40" y="82" width="14" height="22" fill="${INK}"/><rect x="20" y="100" width="72" height="40" rx="8" fill="#E0445A"/><rect x="64" y="86" width="28" height="22" rx="4" fill="#C92A2A"/>`
+   +[[100,'3',0],[174,'4',0],[248,'7',1]].map(([x,t,last])=>`<rect x="${x}" y="98" width="66" height="42" rx="8" fill="${last?'#FFD43B':'#4DABF7'}" stroke="${last?'#F08C00':'#1C7ED6'}" stroke-width="${last?4:2}"/>`+T(x+33,128,t,24,INK)).join('')
+   +[34,78,116,150,190,224,264,298].map(x=>`<circle cx="${x}" cy="146" r="7" fill="${INK}"/>`).join('')
+   +T(70,186,'÷ 10 → 7 left',13)+T(186,186,'÷ 2 → 1 left',13)+T(296,186,'÷ 5 → 2 left',13)
+   +T(180,222,'7 is odd, and 7 − 5 = 2',13,'#5B6683')),
+ remstay:()=>SC('5 jumps along by fives: 2, 7, 12, 17, 22. Divide by 5 and 2 is always left over.','#FFF9DB',
+   T(180,30,'Jump by 5s: the leftover stays 2',15)
+   +`<line x1="20" y1="170" x2="340" y2="170" stroke="${INK}" stroke-width="3"/>`
+   +[2,7,12,17,22].map((n,k)=>{const x=40+k*70;return `<line x1="${x}" y1="162" x2="${x}" y2="178" stroke="${INK}" stroke-width="3"/>`+T(x,198,n,16)+`<circle cx="${x}" cy="222" r="11" fill="#D3F9D8"/>`+T(x,227,'2',12,'#2B8A3E')}).join('')
+   +[40,110,180].map(x=>carrow(x,160,x+35,110,x+66,158,'#F08C00',3)+T(x+35,122,'+5',13,'#E67700')).join('')
+   +carrow(250,160,270,124,290,112,'#F08C00',3)+pal(5,{x:304,y:116,s:.5,mood:'joy',arms:'up'})
+   +T(18,226,'left:',11,'#2B8A3E','start')),
+ seven:()=>SC('In 91 the 1 hugs the 9 with 5: 9 plus 5 is 14, which is in the 7 times table','#E6FCF5',
+   T(180,30,'The 7 hug test',18)
+   +shd(80,206,28)+pal(9,{x:80,y:206,s:.9,arms:'holdR',mood:'joy',col:'#099268'})+shd(150,206,16)+pal(1,{x:150,y:206,s:.9,arms:'holdL',mood:'joy',col:'#63E6BE'})
+   +heart(116,130,9,'#FF6B81')+T(116,108,'× 5',13,'#E0445A')
+   +`<rect x="200" y="50" width="152" height="164" rx="14" fill="#fff"/>`
+   +T(276,82,'1 × 5 = 5',16)+T(276,116,'9 + 5 = 14',16)+T(276,150,'14 = 7 × 2',16,'#2B8A3E')+T(276,190,'91 is in!',19,'#2B8A3E')),
+ ratio:()=>SC('3 pencils cost 6 francs, so 9 pencils cost 18 francs','#FFF4E6',
+   T(180,30,'In proportion',18)
+   +[0,1,2].map(k=>pencil(34+k*20,64)).join('')+bx(26,124,72,30,'6 CHF','#FFF3BF',15)
+   +arrow(116,104,176,104,'#C2255C',4)+T(146,92,'× 3',15,'#C2255C')
+   +[0,1,2].map(r=>[0,1,2].map(c=>pencil(190+r*58+c*16,64)).join('')).join('')+bx(234,124,84,30,'18 CHF','#FFF3BF',15)
+   +T(180,190,'3 times the pencils',14)+T(180,212,'= 3 times the price',14,'#C2255C')),
+ factors:()=>SC('12 dots make a 3 by 4 rectangle: 3 times 4 is 12 and 3 plus 4 is 7','#F3F0FF',
+   T(110,48,'4',16,'#7048E8')+T(28,102,'3',16,'#7048E8')
+   +[0,1,2].map(r=>[0,1,2,3].map(c=>`<circle cx="${62+c*32}" cy="${72+r+r*30}" r="11" fill="${['#9775FA','#B197FC','#D0BFFF'][r]}"/>`).join('')).join('')
+   +`<rect x="44" y="56" width="132" height="98" rx="12" fill="none" stroke="#7048E8" stroke-width="2" stroke-dasharray="5 4"/>`
+   +T(272,92,'3 × 4 = 12',20)+T(272,130,'3 + 4 = 7',20,'#7048E8')+T(272,172,'factor friends!',16)
+   +pal(3,{x:96,y:224,s:.45,arms:'holdR',mood:'joy'})+pal(4,{x:124,y:224,s:.45,arms:'holdL',mood:'joy'}))
+};
+function pencil(x,y){return `<rect x="${x}" y="${y}" width="12" height="44" fill="#FCC419" stroke="#E0A800" stroke-width="1.5"/><rect x="${x}" y="${y-6}" width="12" height="7" rx="2" fill="#FF8FA3"/><path d="M${x} ${y+44} L${x+12} ${y+44} L${x+6} ${y+54}Z" fill="#F3D9B1"/><path d="M${x+4} ${y+50} L${x+8} ${y+50} L${x+6} ${y+54}Z" fill="${INK}"/>`}
+for(const id in NEWSCENES)DEF[id].scene=NEWSCENES[id];
+OLD_IDS.forEach((id,i)=>DEF[id].scene=SCENES[i]);
+const scenePic=u=>`<div class="scenewrap">${UNITS[u].scene()}</div>`;
+function addPic(card,fn){const old=card.b;card.b=()=>`<div class="scenewrap">${fn()}</div>`+(typeof old==='function'?old():old)}
+addPic(DEF.ten.cards[0],scTen);addPic(DEF.ten.cards[1],DEF.ten.scene);addPic(DEF.nine.cards[0],DEF.nine.scene);addPic(DEF.allfrom9.cards[0],DEF.allfrom9.scene);
+Object.assign(DEF.twins,{story:['The Nines Twins','The left twin is one less. The right twin fills up to 99. Put them together!']});
+Object.assign(DEF.cross,{story:['Steps from home','How far is each number from home 10? Cross over, then multiply the steps.']});
+Object.assign(DEF.eleven,{story:["Chef Eleven's sandwich",'Split the number into two slices of bread. The filling is the two slices added together.']});
+Object.assign(DEF.five,{story:['The One-More Lift','The front digit rides the lift up one floor. Multiply them, then put the 25 cherry on top.']});
+Object.assign(DEF.lightning,{story:['The Lightning Ninja','Strike down on the right, cross in the middle, strike down on the left.']});
+Object.assign(DEF.magic,{story:['The magic pot','Every number has a secret magic number. Drop it in the pot: add its digits until only one digit is left. Nines are invisible ghosts!']});
+Object.assign(DEF.tour,{story:['Tournament day','All your number friends came to cheer. Use every sutra and upasutra to win the Black Belt!']});
+UNITS.forEach(u=>{if(u.story)u.cards.unshift({h:u.story[0],b:()=>`<div class="scenewrap">${u.scene()}</div><p>${u.story[1]}</p>`})});
+
+function moreExamples(u){const seen=new Set();let h='';for(let k=0;k<3;k++){const q=makeQ(u,seen);h+=ex(String(q.q),q.steps,'= '+q.a)}return h}
+/* ---------- when each trick works ---------- */
+const RULES={
+ ten:{ok:['One number is close to a ten: 7, 8, 9, 18, 29 …','The ones add up to 10 or more: 8 + 7, 38 + 5, 28 + 47'],
+   no:['Both numbers are far from a ten and the ones are small: 4 + 3, 31 + 42. Just add normally, no tens to make.'],
+   tip:'Look for the number that is nearest to a ten. It is the one that borrows.'},
+ nine:{ok:['Adding or taking away 9, 99, 999 or 8, 98','Numbers one or two below a ten also work: 34 + 19 → 34 + 20 − 1 = 53'],
+   no:['Numbers far from a ten, like + 5 or + 46. Use Make-a-Ten or Parts and Whole instead.'],
+   tip:'Ask: which ten is it hiding as? Then fix the mask.'},
+ look:{ok:['× 0, × 1, + 0, a number − itself','…99 + 1, thousands − 1, + 8 − 8','÷ 10 when the number ends in 0: 340 ÷ 10 = 34'],
+   no:['÷ 10 when the number does not end in 0: 73 ÷ 10 is not a whole number.','Most other sums: if you cannot see it in one second, use another trick.']},
+ parts:{ok:['Any adding of 2-digit and 3-digit numbers','Taking away when each part is big enough: 85 − 32 → 80 − 30 = 50 and 5 − 2 = 3 → 53'],
+   no:['Taking away when the ones part is too small: 52 − 38 (2 − 8 does not work). Use All from 9 or count up instead.']},
+ allfrom9:{ok:['Taking away from 10, 100, 1000, 10000 (a 1 followed by zeros)','The number is not longer than the zeros. Short numbers get zeros in front: 100 − 7 → 07'],
+   no:['Taking away from 200, 500 or 350. Split it: 500 − 37 = 400 + (100 − 37) = 463.','A number bigger than the 100 or 1000: 100 − 145 is less than zero.']},
+ bridge:{ok:['One box □ and one number next to it: □ + 7 = 15, □ − 5 = 9, 3 × □ = 24, □ ÷ 4 = 6'],
+   no:['The box is the one being taken away: 15 − □ = 8. Then □ = 15 − 8 = 7 (no flip to plus!).','The box is the one you divide by: 24 ÷ □ = 6. Then □ = 24 ÷ 6 = 4.','Two boxes: □ + □ = 10. Halve instead: □ = 5.']},
+ cancel:{ok:['The same number on both sides, joined the same way: 6 + 9 = □ + 9, 6 × 8 = 8 × □'],
+   no:['Joined in different ways: 6 × 8 = 8 + □. The × 8 and + 8 do not cancel.','Different numbers: 6 + 9 = □ + 8. Nothing cancels, so work it out.']},
+ sumdiff:{ok:['You know the total of two numbers and their difference'],
+   no:['The total is even and the difference is odd (or the other way): total 10, difference 3 gives 6½ and 3½, not whole numbers.'],
+   tip:'Quick check: total and difference must both be even, or both be odd.'},
+ steps:{ok:['The jump is the same each time (+ 4, − 5)','Each number doubles','The jumps grow by 1 each time'],
+   no:['A list with no rule. Always check every neighbour, not just the first two: 2, 4, 8 starts with + 2 but is really doubling.']},
+ fruits:{ok:['At least one line has only one kind of fruit: 🍎 + 🍎 = 10'],
+   no:['Every line mixes two fruits: 🍎 + 🍌 = 9 and 🍎 − 🍌 = 1. Use Tall and Short Twins (Level 8): 🍎 = 5, 🍌 = 4.']},
+ twins:{ok:['× 9, × 99, × 999 (all nines)','The number has the same number of digits as the nines: 7 × 9, 23 × 99, 456 × 999','Or fewer digits: put zeros in front. 7 × 99 → 07 → 6 and 93 → 693'],
+   no:['The number has more digits than the nines: 18 × 9. Use Nine in Disguise instead: 18 × 10 − 18 = 180 − 18 = 162.','Not all nines: × 98 or × 89. Use 23 × 98 = 23 × 100 − 23 × 2 = 2300 − 46 = 2254.'],
+   tip:'Big-brother rule for 18 × 9: take away one more than the front digit: 18 − 2 = 16, then 10 − 8 = 2 → 162.'},
+ zeros:{ok:['Numbers ending in zeros: 30 × 40, 200 × 3, 60 × 700','The front can be bigger too: 34 × 20 → 34 × 2 = 68, one zero → 680'],
+   no:['Zeros in the middle are not end zeros: 305 × 2 = 610. Use Split and Multiply.']},
+ split:{ok:['A 1-digit number times a 2-digit or 3-digit number: 7 × 13, 6 × 35'],
+   no:['2-digit × 2-digit gets long. Use the Magic Box (Level 14) or the Lightning Ninja (Level 20).']},
+ box:{ok:['Any 2-digit × 2-digit: 12 × 13, 21 × 14','Bigger numbers too, with more squares in the box'],
+   no:['Nothing is forbidden, but it is slow for big numbers. When you are fast, use the Lightning Ninja.']},
+ lastdig:{ok:['Finding how an answer ends','Checking your own answer, or picking the right one from choices'],
+   no:['It does not give the whole answer.','Two choices with the same last digit (1702 and 1712). Then do the full sum.']},
+ cross:{ok:['Both numbers are close to the same home: 10, 100 or 1000','Both below home (98 × 97) or both above (103 × 104)'],
+   no:['Far from home: 6 × 3 (steps 4 and 7 make 6 − 7, less than zero). Just use the times table.','Different homes: 12 × 97. Use the Lightning Ninja.','One above and one below: 98 × 103. It needs a minus step, so use another method.'],
+   tip:'The right side has as many digits as home has zeros: 2 for 100, 3 for 1000.'},
+ base20:{ok:['Both numbers near 20 (2 tens) or both near 50 (5 tens)','Near 30 or 40 works too: 31 × 32 → cross 33, × 3 = 99 tens = 990, + 2 = 992'],
+   no:['Different homes: 22 × 48. Use the Lightning Ninja.']},
+ eleven:{ok:['Any number × 11: 2-digit or 3-digit'],
+   no:['× 12, × 21 or any number that is not 11. Use Coach Twelve or the Lightning Ninja.'],
+   tip:'When the filling is 10 or more, carry 1 into the left bread.'},
+ twelve:{ok:['Any number × 12'],
+   no:['× 13 or any number that is not 12. Use the Magic Box or the Lightning Ninja.']},
+ lightning:{ok:['Any 2-digit × 2-digit. This sutra always works!'],
+   no:['Nothing is forbidden. 3-digit numbers need 5 moves instead of 3, so learn 2-digit first.']},
+ five:{ok:['A number ending in 5 times itself: 35 × 35, 75 × 75, 105 × 105'],
+   no:['Two different numbers: 35 × 45. Use the Lightning Ninja: 1575.','Not ending in 5: 25 × 26.'],
+   tip:'Bigger version: same front digit and last digits that make 10 (Level 22, The Ten Hug).'},
+ hug10:{ok:['Same front digits AND last digits that add to 10: 43 × 47, 61 × 69','Bigger fronts work too: 102 × 108 → 10 × 11 = 110, then 2 × 8 = 16 → 11016'],
+   no:['Last digits do not make 10: 43 × 48 (3 + 8 = 11).','Different fronts: 43 × 57. Use the Lightning Ninja.']},
+ sq10:{ok:['A number just below 10 times itself: 9 × 9, 8 × 8, 7 × 7, 6 × 6'],
+   no:['Two different numbers: 8 × 7. Use the Magic Cross: 56.','Small numbers like 3 × 3: just know the times table.']},
+ sq100:{ok:['A number just below 100 times itself: 88 × 88 up to 99 × 99','Also just below 1000: 996 × 996 → 992 and 016 → 992016'],
+   no:['Far from 100: 75 × 75 (use the Five Shortcut) or 63 × 63 (use the Lightning Ninja).']},
+ squp:{ok:['A number just above 10 or 100 times itself: 11 × 11 up to 19 × 19, 101 × 101 up to 112 × 112'],
+   no:['Far from home: 24 × 24. Use the Lightning Ninja: 576.']},
+ seven143:{ok:['143 × a number in the 7 times table: 7, 14, 21 … 63','A 2-digit or 3-digit number × 1001: it copies'],
+   no:['143 × a number not in the 7 times table: 143 × 10 = 1430, done the normal way.','4-digit numbers × 1001 do not simply copy: 1234 × 1001 = 1235234.']},
+ lastrem:{ok:['Dividing by 10, 2 or 5','Bonus: ÷ 4 looks at the last two digits'],
+   no:['÷ 3, ÷ 7 and most others. 13 ÷ 3 leaves 1 but 23 ÷ 3 leaves 2, even with the same last digit.']},
+ remstay:{ok:['Adding or taking away whole jumps of the number you divide by'],
+   no:['Adding something that is not a whole jump: 7 ÷ 5 leaves 2, but 7 + 3 = 10 and 10 ÷ 5 leaves 0.']},
+ seven:{ok:['Checking 2-digit and 3-digit numbers for the 7 times table'],
+   no:['Other times tables need a different hug number. For 13 hug with 4: 91 → 9 + 4 = 13, so 91 is in the 13 times table too!'],
+   tip:'For very big numbers, hug again and again until the number is small.'},
+ ratio:{ok:['Two things that grow together: more pencils, more money'],
+   no:['Things that do not grow together. If 1 child eats lunch in 10 minutes, 3 children eating together still take 10 minutes!']},
+ factors:{ok:['Whole numbers that multiply to one number and add to another'],
+   no:['Sometimes there are no factor friends: multiply to 12 and add to 9. Check all pairs (1 and 12, 2 and 6, 3 and 4): none adds to 9.']},
+ magic:{ok:['Checking + and × answers'],
+   no:['It cannot catch every mistake. If the digits are swapped (6 × 9 = 45 instead of 54), the magic numbers still match.','Not for checking ÷ directly.'],
+   tip:'If the magic numbers do not match, the answer is wrong for sure. If they match, it is very likely right.'},
+ tour:{ok:['Before each question, ask: which rule fits? Check the "When can I use it?" card of that level.'],
+   no:['If no shortcut fits, the Lightning Ninja (× ) and Parts and Whole (+) always work.']}
+};
+function rulesCard(u){const r=RULES[u.id];if(!r)return null;return{h:'When can I use it?',b:`<div class="rules"><div class="rok"><b>✓ Use it when…</b><ul>${r.ok.map(x=>`<li>${x}</li>`).join('')}</ul></div><div class="rno"><b>✗ Not for…</b><ul>${r.no.map(x=>`<li>${x}</li>`).join('')}</ul></div></div>${r.tip?`<p class="tip">${r.tip}</p>`:''}`}}
+
+for(let u=0;u<UNITS.length;u++){const fixed=moreExamples(u),rc=rulesCard(UNITS[u]);if(rc)UNITS[u].cards.push(rc);UNITS[u].cards.push({h:'More examples',b:fixed},{h:'Example machine',b:()=>exampleCard(u)})}
+let EX={u:-1};
+function exampleCard(u){if(EX.u!==u||!EX.q)EX={u,q:G[u](),shown:0,n:1};const q=EX.q,all=EX.shown>=q.steps.length;
+  return `<p class="tip">Try it in your head first. Then tap to check each step.</p><div class="ex"><div class="exq">${esc(q.q)}</div>${EX.shown?`<ol>${q.steps.slice(0,EX.shown).map(x=>`<li>${x}</li>`).join('')}</ol>`:''}${all?`<div class="exa">Answer: ${esc(q.a)}</div>`:''}</div><div class="exbtns">${all?'':`<button class="btn small" data-exstep>Show step ${EX.shown+1}</button>`}<button class="btn small ghost" data-exnew>New example</button></div><p class="tip">Example ${EX.n}</p>`}
+function giveGift(rw){const reg=REG.find(k=>!S.items.includes(k));if(reg){S.items.push(reg);equip(reg);rw.push({type:'item',k:reg})}else{const gi=GIS.findIndex((_,i)=>!S.gis.includes(i));if(gi>=0){S.gis.push(gi);S.gi=gi;rw.push({type:'gi',i:gi})}else{S.trophies++;rw.push({type:'trophy'})}}}
+const lockIcon=`<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>`;
+
+/* ---------- sound + confetti ---------- */
+let AC=null;
+function tone(seq){if(!S.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();let t=AC.currentTime;for(const [f,d,type] of seq){const o=AC.createOscillator(),g=AC.createGain();o.type=type||'triangle';o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.18,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+d+.02);t+=d*.8}}catch(e){}}
+const sfx={tap:()=>tone([[660,.06]]),right:()=>tone([[523,.1],[659,.1],[784,.18]]),wrong:()=>tone([[220,.22,'square']]),win:()=>tone([[523,.12],[659,.12],[784,.12],[1047,.3]]),gift:()=>tone([[784,.08],[988,.08],[1175,.08],[1568,.3]]),zap:()=>tone([[880,.06,'square'],[1320,.06,'square'],[1760,.16]]),tick:()=>tone([[1000,.04,'sine']])};
+const fx=document.getElementById('fx'),cx=fx.getContext('2d');let parts=[],raf=0;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function confetti(n=90){if(reduce)return;fx.width=innerWidth*devicePixelRatio;fx.height=innerHeight*devicePixelRatio;const cols=['#FF7A2F','#2F80ED','#F5B700','#2E9E6B','#E0445A','#9B5DE5'];
+  for(let i=0;i<n;i++)parts.push({x:fx.width/2+(Math.random()-.5)*fx.width*.3,y:fx.height*.35,vx:(Math.random()-.5)*16*devicePixelRatio,vy:(-Math.random()*16-6)*devicePixelRatio,s:(5+Math.random()*7)*devicePixelRatio,c:pick(cols),r:Math.random()*6,life:110});
+  if(!raf)loop()}
+function loop(){cx.clearRect(0,0,fx.width,fx.height);parts=parts.filter(p=>p.life-->0);for(const p of parts){p.vy+=.5*devicePixelRatio;p.x+=p.vx;p.y+=p.vy;p.r+=.15;cx.save();cx.translate(p.x,p.y);cx.rotate(p.r);cx.fillStyle=p.c;cx.fillRect(-p.s/2,-p.s/3,p.s,p.s*.66);cx.restore()}
+  raf=parts.length?requestAnimationFrame(loop):(cx.clearRect(0,0,fx.width,fx.height),0)}
+
+/* ---------- screens ---------- */
+const app=document.getElementById('app');
+let view={name:'home'},quiz=null,lessonIdx=0,lastRewards=[];
+function go(v){view=v;render();window.scrollTo(0,0)}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function home(){
+  const owned=S.items.length;
+  let list=UNITS.map((u,i)=>{const lock=!S.test&&i>S.unlocked,b=S.best[i];
+    const ns=nextStage(i);let tag=lock?'<span class="tag">Locked</span>':ns===4?'<span class="tag perfect">Complete</span>':ns===0&&!b?'<span class="tag new">New</span>':`<span class="tag done">${ns}/4 missions</span>`;
+    const disc=lock?'#AEB59A':u.col;
+    return `${PHASES[i]?`<li class="phase">${PHASES[i]}</li>`:''}<li><button class="unit" data-unit="${i}" ${lock?'disabled aria-disabled="true"':''}><span class="disc" style="background:${disc}">${lock?'?':i+1}</span><span><span class="t">${esc(u.t)}${u.belt?`<span class="beltmini" style="background:${BELTS[u.belt].c}" title="${BELTS[u.belt].n} belt"></span>`:''}</span><br><span class="s">${esc(u.tag)} · ${esc(u.s.split(' · ')[0])}</span></span>${tag}</button></li>`}).join('');
+  return `${S.test?'<div class="testbar"><span><b>Test mode is on.</b> All levels are open and rounds are not saved.</span><button class="btn small ghost" data-test>Turn off</button></div>':''}<header class="top"><div class="brand"><small>Vedic maths training</small>Ninja Maths Dojo</div><div class="starpill" aria-label="${S.stars} stars">${starIcon()}${S.stars}</div></header>
+  <section class="hero"><div class="stage">${ninja({eq:S.eq,gi:S.gi,belt:S.belt})}</div>
+  <div class="rank"><div class="ninjaname">${esc(S.name)}</div><div class="belt"><i style="background:${BELTS[S.belt].c}"></i>${BELTS[S.belt].n} Belt</div>${powerHTML()}<div class="meta">${owned} of ${REG.length+RARE.length+SPEED.length} treasures found</div>${S.light?`<div class="meta">${boltIcon}${S.light} lightning answers</div>`:''}<div class="herobtns"><button class="btn small ghost" data-go="wardrobe">Hero Lab</button><button class="btn small ghost" data-go="cards">Sutra cards ${UNITS.filter((_,i)=>unitDone(i)).length}/${UNITS.length}</button></div></div></section>
+  <h2>Training path</h2><ol class="path">${list}</ol>
+  <p class="note">All 16 sutras and 13 upasutras are here. Each one has 4 missions: Quick, Training, Master and the Lightning Round. Pass all 4 to collect its card and open the next one. Every round wins gear for your hero, and stars buy healthy food in the Hero Lab to make your hero stronger.</p>
+  <div class="testrow"><button class="btn small ghost" data-test>${S.test?'Turn test mode off':'Test mode'}</button><span class="note">For grown-ups: open every level to check it. Test rounds are not saved.</span></div>`;
+}
+
+function unitScreen(i){
+  const u=UNITS[i],c=u.cards[lessonIdx];
+  return `<div class="top"><button class="iconbtn" data-go="home" aria-label="Back">‹</button><div class="starpill">${starIcon()}${S.stars}</div></div>
+  <div class="uhead"><span class="disc" style="background:${u.col}">${i+1}</span><div><h2>${esc(u.t)}</h2><div class="sutra"><b>${esc(u.tag)}</b> · ${esc(u.s)}</div></div></div>
+  <div class="kid">${esc(u.kid)}</div>
+  <article class="lesson pop" aria-live="polite"><h3>${c.h}</h3>${typeof c.b==='function'?c.b():c.b}</article>
+  <div class="pager"><button class="btn small ghost" data-lesson="-1" ${lessonIdx===0?'disabled style="opacity:.4"':''}>Back</button><div class="dots">${u.cards.map((_,k)=>`<i class="${k===lessonIdx?'on':''}"></i>`).join('')}</div>${lessonIdx<u.cards.length-1?`<button class="btn small" data-lesson="1">Next</button>`:`<span style="width:84px"></span>`}</div>
+  <h2>Your 4 missions</h2>
+  <ol class="stages">${STAGES.map((st,k)=>{const ns=nextStage(i),done=stDone(i,st.k),open=S.test||done||k<=ns,need=needOf(i,st.mode);
+    return `<li><button class="mstage ${done?'done':open?'cur':'lock'} ${st.k==='ta'?'ta':''}" ${open?`data-start="${i}" data-n="${st.mode}"`:'disabled aria-disabled="true"'}><span class="sn">${done?'✓':open?k+1:lockIcon}</span><span class="sx"><b>${st.k==='ta'?boltIcon:''}${st.n}</b><small>${st.sub} · pass with ${need} right</small></span><span class="sg">${done?'Passed':open?'Play':'Locked'}</span></button></li>`}).join('')}</ol>
+  ${unitDone(i)?`<p class="kid">Sutra complete! ${i<UNITS.length-1?'The next sutra is open.':'You are a Black Belt ninja!'}</p>`:`<p class="note">Pass the missions in order. Finish all 4 to open the next sutra.</p>`}
+  <h2>Free practice</h2>
+  <button class="mstage practice" data-start="${i}" data-n="p50"><span class="sn">50</span><span class="sx"><b>Practice</b><small>50 questions · no timer · take your time</small></span><span class="sg">${S.bestP[i]!=null?`Best ${S.bestP[i]}/50`:'Play'}</span></button>
+  <p class="note">Practice does not count for the missions. Every 25 answers or more wins a gift, and 50 out of 50 opens a golden treasure.</p>
+  <div class="records onpage">
+    <div><span>Best score</span><b>${S.best[i]?`${S.best[i].c}/${S.best[i].t}`:'–'}</b></div>
+    <div><span>Fastest round</span><b>${S.bestAvg[i]?S.bestAvg[i].toFixed(1)+' s each':'–'}</b></div>
+    <div><span>Lightning Round record</span><b>${S.bestTA[i]||'–'}</b></div>
+  </div>
+  <p class="note">Answer fast for more stars. Lightning = 3 stars, Quick = 2 stars, Steady = 1 star. The timer bar shows which zone you are in, and longer answers get a little more time.</p>`;
+}
+const boltIcon=`<svg class="bi" viewBox="0 0 24 24" aria-hidden="true"><polygon points="14,2 4,14 11,14 9,22 20,9 13,9 15,2" fill="#FFD43B" stroke="#C98A00" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+
+function makeQ(u,seen){let q,k=0;do{q=G[u]();k++}while(seen.has(q.q)&&k<60);seen.add(q.q);return q}
+function newQuiz(u,mode){const ta=mode==='ta',prac=mode==='p50',total=ta?0:prac?50:+mode,seen=new Set(),qs=[];
+  for(let k=0;k<(ta?1:total);k++)qs.push(makeQ(u,seen));
+  const now=performance.now();
+  return{u,mode,ta,prac,total,qs,seen,i:0,correct:0,answered:0,stars:0,light:0,times:[],input:'',state:'ask',picked:null,qStart:now,taEnd:ta?now+60000:0,lastSec:61,done:false}}
+
+function clockHTML(q,t){
+  const l=limitOf(q,quiz.u),sp=speedOf(q,quiz.u,t),w=Math.max(0,1-t/(2*l))*100;
+  return `<div class="clock z${sp}" id="clock"><div class="ctrack"><b id="cbar" style="width:${w}%"></b></div><span class="ctime" id="ctime">${t.toFixed(1)} s</span><span class="czone" id="czone">${SPEEDNAME[sp]} ${'★'.repeat(sp)}</span></div>`;
+}
+function paintClock(q,t){
+  const c=document.getElementById('clock');if(!c)return;const l=limitOf(q,quiz.u),sp=speedOf(q,quiz.u,t);
+  c.className='clock z'+sp;document.getElementById('cbar').style.width=Math.max(0,1-t/(2*l))*100+'%';
+  document.getElementById('ctime').textContent=t.toFixed(1)+' s';document.getElementById('czone').textContent=SPEEDNAME[sp]+' '+'★'.repeat(sp);
+}
+
+function quizScreen(){
+  const q=quiz.qs[quiz.i],st=quiz.state;
+  const ansCls=st==='right'?'ok':st==='wrong'?'bad':'';
+  let body='';
+  if(q.choices){body=`<div class="choices">${q.choices.map(c=>{let cl='';if(st!=='ask'){if(c===q.a)cl='ok';else if(c===quiz.picked)cl='bad'}return `<button data-choice="${esc(c)}" class="${cl}" ${st!=='ask'?'disabled':''}>${esc(c)}</button>`}).join('')}</div>`}
+  else{body=`<div class="answer ${ansCls}" aria-live="polite">${quiz.input||'?'}</div>`}
+  let fb='';
+  if(st==='right'){
+    if(quiz.ta)fb=`<div class="fb ok pop"><h3>${pick(['Yes!','Strike!','Super!','Zap!'])} +1</h3></div>`;
+    else{const sp=q.sp,word=sp===3?pick(['LIGHTNING!','Super speed!','Ninja flash!']):sp===2?pick(['Quick strike!','Nice and fast!','Great!']):pick(['Correct!','You got it!','Well done!']);
+      fb=`<div class="fb ok pop sp${sp}"><h3>${sp===3?boltIcon:''}${word} +${sp} star${sp>1?'s':''}</h3>${quiz.prac?'':`<span class="tip">${q.t.toFixed(1)} seconds</span>`}</div>`}}
+  if(st==='wrong')fb=quiz.ta?`<div class="fb bad pop"><h3>The answer is ${q.a}</h3></div>`:`<div class="fb bad pop"><h3>Almost! The answer is ${q.a}</h3><div class="fbpic">${scenePic(quiz.u)}</div><ol>${q.steps.map(s=>`<li>${s}</li>`).join('')}</ol><button class="btn block" data-next>Next question</button></div>`;
+  const pad=(!q.choices&&st==='ask')?`<div class="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button data-k="${n}">${n}</button>`).join('')}<button class="del" data-k="del" aria-label="Delete">⌫</button><button data-k="0">0</button><button class="go" data-k="ok" aria-label="Check">✓</button></div>`:'';
+  const now=performance.now();
+  let top,clock='';
+  if(quiz.ta){const left=Math.max(0,(quiz.taEnd-now)/1000);
+    top=`<div class="qbar"><button class="iconbtn" data-quit aria-label="Stop Time Attack">×</button><div class="prog tap"><b id="pbar" style="width:${left/60*100}%"></b></div><div class="tatime ${left<=10?'hurry':''}" id="tat">${Math.ceil(left)}</div><div class="starpill">${starIcon()}${quiz.correct}</div></div>`;
+  }else{
+    top=`<div class="qbar"><button class="iconbtn" data-quit aria-label="Stop practice">×</button><div class="prog"><b style="width:${quiz.i/quiz.total*100}%"></b></div><div class="starpill">${starIcon()}${quiz.stars}</div></div>`;
+    clock=quiz.prac?'':clockHTML(q,st==='ask'?(now-quiz.qStart)/1000:q.t);
+  }
+  const qn=quiz.ta?`Lightning Round · ${quiz.correct} of ${needOf(quiz.u,'ta')} needed`:quiz.prac?`Practice · question ${quiz.i+1} of 50 · ${quiz.correct} right`:`Question ${quiz.i+1} of ${quiz.total} · ${quiz.correct} right, need ${needOf(quiz.u,quiz.mode)}`;
+  return `${top}
+  <section class="qcard"><div class="qnum">${qn} · ${esc(UNITS[quiz.u].t)}</div>${clock}<div class="qtext ${q.smallq?'smallq':''}">${esc(q.q)}</div>${body}</section>${fb}${pad}
+  ${view.quitAsk?`<div class="panel"><b>${quiz.prac?'Finish practice now? You keep your stars, and 25 answers or more still wins a gift.':'Stop this round? You will not get a prize for it.'}</b><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small ghost" data-quitno>Keep going</button>${quiz.prac?'<button class="btn small green" data-finishnow>Finish now</button>':'<button class="btn small" data-quityes>Stop</button>'}</div></div>`:''}`;
+}
+
+function answer(val){
+  const q=quiz.qs[quiz.i];if(quiz.state!=='ask'||quiz.done)return;
+  const t=(performance.now()-quiz.qStart)/1000;q.t=t;quiz.answered++;
+  const ok=String(val)===String(q.a);quiz.picked=val;const idx=quiz.i;
+  if(ok){quiz.correct++;quiz.times.push(t);
+    const sp=quiz.ta||quiz.prac?1:speedOf(q,quiz.u,t);q.sp=sp;quiz.stars+=sp;if(!quiz.ta&&sp===3)quiz.light++;
+    quiz.state='right';(sp===3?sfx.zap:sfx.right)();render();setTimeout(()=>nextQ(idx),quiz.ta?450:1000)}
+  else{quiz.state='wrong';sfx.wrong();render();if(quiz.ta)setTimeout(()=>nextQ(idx),1400)}
+}
+function nextQ(idx){
+  if(!quiz||quiz.done||idx!==quiz.i)return;
+  quiz.i++;quiz.input='';quiz.picked=null;quiz.state='ask';
+  if(quiz.ta)quiz.qs.push(makeQ(quiz.u,quiz.seen));
+  if(!quiz.ta&&quiz.i>=quiz.total){finish();return}
+  quiz.qStart=performance.now();render();
+}
+
+function finish(){
+  if(quiz.done)return;quiz.done=true;
+  if(quiz.prac){const u=quiz.u,c=quiz.correct,tot=quiz.answered,rw=[],tm=quiz.times,tt=tm.reduce((a,b)=>a+b,0);
+    if(!S.test){S.stars+=c;if(tot>=50&&(S.bestP[u]==null||c>S.bestP[u]))S.bestP[u]=c;if(tot>=25)giveGift(rw);if(tot>=50&&c===50){const r=RARE.find(k=>!S.items.includes(k));if(r){S.items.push(r);equip(r);rw.push({type:'rare',k:r})}}save()}
+    lastRewards=rw.map(r=>({...r,open:false}));
+    go({name:'result',u,c,tot,ta:false,prac:1,mode:'p50',earned:c,light:0,avg:tm.length?tt/tm.length:0,total:tt,passed:true,need:0,sn:'Practice',test:S.test?1:0});
+    setTimeout(()=>{sfx.win();confetti(80)},150);return}
+  if(S.test){const u=quiz.u,c=quiz.correct,tot=quiz.ta?quiz.answered:quiz.total,need=needOf(u,quiz.mode),tm=quiz.times,tt=tm.reduce((a,b)=>a+b,0);lastRewards=[];
+    go({name:'result',u,c,tot,ta:quiz.ta,mode:quiz.mode,earned:quiz.stars,light:quiz.light,avg:tm.length?tt/tm.length:0,total:tt,passed:c>=need,need,sn:stageOf(quiz.mode).n,test:1});return}
+  const u=quiz.u,ta=quiz.ta,c=quiz.correct,tot=ta?quiz.answered:quiz.total,rw=[];
+  const avg=quiz.times.length?quiz.times.reduce((a,b)=>a+b,0)/quiz.times.length:0;
+  let earned=quiz.stars,rec=null;
+  if(ta){const prev=S.bestTA[u]||0;if(c>prev){S.bestTA[u]=c;if(prev>0){earned+=5;rec={type:'record',ta:1,c,prev}}}}
+  else{const b=S.best[u];if(!b||c/tot>b.c/b.t||(c/tot===b.c/b.t&&tot>b.t))S.best[u]={c,t:tot};
+    if(c/tot>=.8){const prev=S.bestAvg[u];if(!prev||avg<prev){S.bestAvg[u]=avg;if(prev)rec={type:'record',avg,prev}}}}
+  S.stars+=earned;S.light+=quiz.light;
+  if(!ta||c>=Math.min(5,needOf(u,'ta'))){const reg=REG.find(k=>!S.items.includes(k));
+    if(reg){S.items.push(reg);equip(reg);rw.push({type:'item',k:reg})}
+    else{const gi=GIS.findIndex((_,i)=>!S.gis.includes(i));if(gi>=0){S.gis.push(gi);S.gi=gi;rw.push({type:'gi',i:gi})}else{S.trophies++;rw.push({type:'trophy'})}}}
+  if(!ta&&c===tot){const r=RARE.find(k=>!S.items.includes(k));if(r){S.items.push(r);equip(r);rw.push({type:'rare',k:r})}else{S.stars+=10;rw.push({type:'bonus'})}}
+  const speedy=ta?(rec&&c>=10):quiz.light>=Math.ceil(tot*.6);
+  if(speedy){const s=SPEED.find(k=>!S.items.includes(k));if(s){S.items.push(s);equip(s);rw.push({type:'speed',k:s})}else{S.stars+=5;rw.push({type:'speedbonus'})}}
+  const need=needOf(u,quiz.mode),passed=c>=need,stg=stageOf(quiz.mode),wasUnit=unitDone(u);
+  if(passed&&!stDone(u,stg.k)){(S.stages[u]=S.stages[u]||{})[stg.k]=1;
+    if(unitDone(u)&&!wasUnit){rw.push({type:'sutra',u});const bi=UNITS[u].belt;if(bi&&S.belt<bi){S.belt=bi;rw.push({type:'belt',i:bi})}
+      relock();if(u+1<UNITS.length)rw.push({type:'unlock',i:u+1})}
+    else{const nx=nextStage(u);if(nx<4)rw.push({type:'stage',k:nx})}}
+  if(rec)rw.unshift(rec);
+  save();lastRewards=rw.map(r=>({...r,open:r.type==='unlock'||r.type==='record'||r.type==='stage'}));
+  go({name:'result',u,c,tot,ta,mode:quiz.mode,earned,light:quiz.light,avg,total:quiz.times.length?quiz.times.reduce((a,b)=>a+b,0):0,passed,need,sn:stg.n});
+  setTimeout(()=>{sfx.win();confetti(c===tot&&!ta?160:80)},150);
+}
+setInterval(()=>{
+  if(view.name!=='quiz'||!quiz||quiz.done)return;const now=performance.now();
+  if(quiz.ta){const left=Math.max(0,(quiz.taEnd-now)/1000),sec=Math.ceil(left);
+    const el=document.getElementById('tat');if(el){el.textContent=sec;el.classList.toggle('hurry',left<=10)}
+    const pb=document.getElementById('pbar');if(pb)pb.style.width=left/60*100+'%';
+    if(sec<quiz.lastSec){quiz.lastSec=sec;if(sec<=5&&sec>0)sfx.tick()}
+    if(left<=0)finish();
+  }else if(quiz.state==='ask')paintClock(quiz.qs[quiz.i],(now-quiz.qStart)/1000);
+},100);
+
+function rewardCard(r,idx){
+  if(r.type==='unlock')return `<div class="gift wide"><span class="disc" style="background:${UNITS[r.i].col}">${r.i+1}</span><div><div class="lbl">New level open!</div><div class="sub">${esc(UNITS[r.i].t)}</div></div></div>`;
+  if(r.type==='record')return `<div class="gift wide speed"><span class="disc" style="background:#2F80ED">${boltIcon}</span><div><div class="lbl">New speed record!</div><div class="sub">${r.ta?`${r.c} correct in 60 seconds (before: ${r.prev}). +5 bonus stars`:`${r.avg.toFixed(1)} seconds per answer (before: ${r.prev.toFixed(1)})`}</div></div></div>`;
+  if(r.type==='stage')return `<div class="gift wide"><span class="disc" style="background:var(--accent)">${r.k+1}</span><div><div class="lbl">Next mission open: ${STAGES[r.k].n}</div><div class="sub">${STAGES[r.k].sub}, pass with ${needOf(view.u,STAGES[r.k].mode)} right</div></div></div>`;
+  const rare=r.type==='rare'||r.type==='bonus',spd=r.type==='speed'||r.type==='speedbonus';
+  if(!r.open)return `<button class="gift closed ${rare||r.type==='sutra'?'rare':''} ${spd?'speed':''}" data-open="${idx}"><div class="box">${giftBox(rare||r.type==='sutra',spd)}</div><div class="lbl">${r.type==='sutra'?'Sutra card!':rare?'Golden treasure!':spd?'Speed treasure!':r.type==='belt'?'Belt ceremony':'Mystery gift'}</div><div class="sub">Tap to open</div></button>`;
+  if(r.type==='sutra')return `<div class="gift sutracard rare pop">${scenePic(r.u)}<div class="lbl">Sutra card: ${esc(UNITS[r.u].t)}</div><div class="sub">${esc(UNITS[r.u].kid)}</div></div>`;
+  let pv='',name='',sub='';
+  if(r.type==='item'||r.type==='rare'||r.type==='speed'){pv=ninja({eq:[r.k],gi:S.gi,belt:S.belt,label:ITEMS[r.k].n});name=ITEMS[r.k].n;sub=rare?'Special prize for a perfect round':spd?'Prize for lightning-fast answers':'New outfit piece'}
+  if(r.type==='speedbonus'){pv=`<div class="starrow">${starIcon()}${starIcon()}${starIcon()}</div>`;name='+5 speed stars';sub='You found every speed treasure!'}
+  if(r.type==='gi'){pv=ninja({eq:[],gi:r.i,belt:S.belt});name=GIS[r.i].n+' Uniform';sub='New uniform colour'}
+  if(r.type==='belt'){pv=ninja({eq:S.eq,gi:S.gi,belt:r.i});name=BELTS[r.i].n+' Belt!';sub='You earned a new belt'}
+  if(r.type==='trophy'){pv=`<svg viewBox="0 0 120 120"><path d="M38 20 H82 V50 Q82 74 60 76 Q38 74 38 50Z" fill="#F5B700"/><path d="M38 28 H24 Q24 52 40 54 M82 28 H96 Q96 52 80 54" fill="none" stroke="#F5B700" stroke-width="6"/><rect x="54" y="76" width="12" height="16" fill="#C98A00"/><rect x="40" y="92" width="40" height="12" rx="3" fill="#C98A00"/></svg>`;name='Gold Trophy';sub=`Trophy number ${S.trophies}`}
+  if(r.type==='bonus'){pv=`<div class="starrow">${starIcon()}${starIcon()}${starIcon()}</div>`;name='+10 bonus stars';sub='You found every treasure!'}
+  return `<div class="gift pop ${rare?'rare':''} ${spd?'speed':''}"><div class="prev">${pv}</div><div class="lbl">${name}</div><div class="sub">${sub}</div></div>`;
+}
+function resultScreen(){
+  const v=view,p=v.tot?v.c/v.tot:0;
+  const msg=v.prac?(v.tot>=50?`Practice complete! ${v.c} right out of 50.`:`Good practice! ${v.c} right out of ${v.tot}.`):v.passed?(!v.ta&&p===1?`PERFECT! ${v.sn} passed!`:`${v.sn} passed! Great job, ninja!`):`You need ${v.need} right to pass ${v.sn}. You got ${v.c}. Look at the story picture again, then try once more!`;
+  const mm=s=>`${Math.floor(s/60)}:${String(Math.round(s%60)).padStart(2,'0')}`;
+  const stats=v.prac?`<div><span>Stars won</span><b>${v.earned}</b></div><div><span>Right answers</span><b>${v.c}/${v.tot}</b></div><div><span>Best practice</span><b>${S.bestP[v.u]!=null?S.bestP[v.u]+'/50':'–'}</b></div>`:v.ta
+    ?`<div><span>Answered</span><b>${v.tot}</b></div><div><span>Record</span><b>${S.bestTA[v.u]||v.c}</b></div><div><span>Stars won</span><b>${v.earned}</b></div>`
+    :`<div><span>Stars won</span><b>${v.earned}</b></div><div><span>Lightning answers</span><b>${v.light}</b></div><div><span>Time per answer</span><b>${v.avg?v.avg.toFixed(1)+' s':'–'}</b></div><div><span>Total time</span><b>${mm(v.total)}</b></div>`;
+  return `<section class="result"><div class="qnum">${esc(UNITS[v.u].t)} · ${v.sn}</div>${v.prac?'':`<div class="passpill ${v.passed?'ok':'no'}">${v.passed?'Mission passed':'Not passed yet'}</div>`}<div class="bigscore">${v.ta?v.c:`${v.c} / ${v.tot}`}</div>${v.ta?'<div class="meta">correct in 60 seconds</div>':''}<h2>${msg}</h2><div class="records">${stats}</div></section>
+  <h2>Your prizes</h2>${lastRewards.length?`<div class="gifts">${lastRewards.map(rewardCard).join('')}</div>`:(v.test?'<p class="note">Test mode is on, so this round was not saved and gave no prizes.</p>':'<p class="note">No prize this time. Get 5 right in the Lightning Round to win a gift.</p>')}
+  <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn green" style="flex:1" data-go="home">See my ninja</button><button class="btn ghost" style="flex:1" data-start="${v.u}" data-n="${v.mode}">Play again</button></div>`;
+}
+
+const powerHTML=()=>{const P=power(),lv=levelOf(P),next=LV[lv+1],pct=next?Math.min(100,(P-LV[lv])/(next-LV[lv])*100):100;
+  return `<div class="power"><div class="ptop"><b>Level ${lv+1} · ${TITLES[lv]}</b><span>${P} power</span></div><div class="pbar"><b style="width:${pct.toFixed(0)}%"></b></div><small>${next?`${next-P} more power to Level ${lv+2}`:'Top level reached!'}</small></div>`};
+function wardrobe(){
+  const all=[...REG,...RARE,...SPEED];
+  const card=k=>{const own=S.items.includes(k),it=ITEMS[k],on=S.eq.includes(k);
+    if(!own)return `<div class="item locked"><div class="q">?</div><div class="nm">${it.rare?'Golden secret':it.speed?'Speed secret':it.kind==='weapon'?'Secret weapon':'Secret item'}</div><div class="how">${it.rare?'Get every answer right':it.speed?'Answer at lightning speed':'Finish a round'}</div></div>`;
+    return `<button class="item ${it.rare?'rare':''} ${it.speed?'spd':''} ${on?'on':''}" data-wear="${k}" aria-pressed="${on}">${ninja({eq:[k],gi:S.gi,belt:S.belt,label:it.n})}<div class="nm">${it.n}</div><div class="pw">+${pwOf(k)} power</div><div class="how">${on?'Wearing':'Tap to wear'}</div></button>`};
+  const weapons=all.filter(k=>ITEMS[k].kind==='weapon'),outfit=all.filter(k=>ITEMS[k].kind!=='weapon');
+  const cur=S.sp||'ninja';
+  const spc=Object.entries(SPECIES).map(([k,v])=>{const lock=v.belt&&S.belt<v.belt;return `<button class="spc ${cur===k?'on':''}" data-sp="${k}" ${lock?'disabled':''}>${ninja({eq:[],gi:S.gi,belt:S.belt,sp:k,label:v.n})}<span>${lock?`${BELTS[v.belt].n} belt`:v.n}</span></button>`}).join('');
+  const skins=cur==='ninja'?`<div class="sub2"><b>Skin colour</b><div class="swatches">${SKINS.map(c=>`<button class="sw ${(S.skin||'#F2C29B')===c?'on':''}" style="background:${c}" data-skin="${c}" aria-label="Skin colour"></button>`).join('')}</div></div>`:'';
+  const sw=GIS.map((g,i)=>{const own=S.gis.includes(i);return `<button class="sw ${S.gi===i?'on':''} ${own?'':'locked'}" style="background:${g.c}" data-gi="${i}" ${own?'':'disabled'} aria-label="${g.n} uniform${own?'':' (locked)'}"></button>`}).join('');
+  const foods=FOODS.map(f=>`<div class="food"><div class="ficon">${foodSVG(f.k)}</div><div class="fn">${f.n}</div><div class="pw">+${f.p} power</div><button class="btn small ${S.stars>=f.c?'green':'ghost'}" data-feed="${f.k}" ${S.stars>=f.c?'':'disabled'} aria-label="Feed ${f.n} for ${f.c} stars">${starIcon()}${f.c}</button></div>`).join('');
+  const yum=view.yum?`<div class="yumbar pop"><b>Yum! ${view.yum.n}.</b> +${view.yum.p} power.${view.yum.up?` <b>Level up! Your hero is now a ${TITLES[view.yum.up]}!</b>`:''}</div>`:'';
+  return `<div class="top"><button class="iconbtn" data-go="home" aria-label="Back">‹</button><h2>Hero Lab</h2><div class="starpill">${starIcon()}${S.stars}</div></div>
+  <section class="hero"><div class="stage ${view.yum?'yum':''}">${ninja({eq:S.eq,gi:S.gi,belt:S.belt})}</div><div class="rank"><label class="meta" for="nm">Hero name</label><div class="namebox"><input id="nm" maxlength="14" value="${esc(S.name)}"></div>${powerHTML()}${S.trophies?`<div class="meta">Gold trophies: ${S.trophies}</div>`:''}</div></section>
+  ${yum}
+  <div class="panel"><b>1. Create your hero</b><div class="spcgrid">${spc}</div>${skins}<div class="sub2"><b>Uniform colour</b><div class="swatches">${sw}</div></div><span class="note">The dragon unlocks at the Green belt. More uniform colours unlock after all the outfit pieces are found.</span></div>
+  <div class="panel"><b>2. Feed your hero healthy food</b><span class="note">Spend stars on healthy food. Every bite makes your hero stronger!</span><div class="foods">${foods}</div></div>
+  <h2>3. Weapons</h2><div class="wardgrid">${weapons.map(card).join('')}</div>
+  <h2>4. Armour and outfit</h2><div class="wardgrid">${outfit.map(card).join('')}</div>
+  <div class="panel"><span class="note">For grown-ups: sound is ${S.sound?'on':'off'}.</span><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small ghost" data-sound>${S.sound?'Turn sound off':'Turn sound on'}</button><button class="btn small ghost" data-test>${S.test?'Turn test mode off':'Test mode: open all levels'}</button></div>
+  <div class="sub2"><b>Move progress to another device</b><span class="note">Tap Copy progress code here. Then open Ninja Maths Dojo on the other device, paste the code in this box and tap Load.</span><textarea id="pcode" rows="3" placeholder="Progress code">${esc(view.pcode||'')}</textarea><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small ghost" data-export>Copy progress code</button><button class="btn small ghost" data-import>Load progress code</button></div>${view.pmsg?`<span class="note"><b>${view.pmsg}</b></span>`:''}</div>
+  ${view.resetAsk?`<b>Erase all stars, belts and items?</b><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn small ghost" data-resetno>Keep everything</button><button class="btn small" style="background:var(--wrong);box-shadow:0 5px 0 #A92B3E" data-resetyes>Erase</button></div>`:`<button class="danger" data-reset>Start over</button>`}</div>`;
+}
+
+function render(){
+  if(view.name==='home')app.innerHTML=home();
+  else if(view.name==='unit')app.innerHTML=unitScreen(view.u);
+  else if(view.name==='quiz')app.innerHTML=quizScreen();
+  else if(view.name==='result')app.innerHTML=resultScreen();
+  else if(view.name==='wardrobe')app.innerHTML=wardrobe();
+  else if(view.name==='cards')app.innerHTML=cardsScreen();
+}
+function cardsScreen(){const n=UNITS.filter((_,i)=>unitDone(i)).length;
+  return `<div class="top"><button class="iconbtn" data-go="home" aria-label="Back">‹</button><h2>Sutra cards</h2><div class="starpill">${n}/${UNITS.length}</div></div>
+  <p class="note">Finish all 4 missions of a sutra to collect its card.</p>
+  <div class="cardlist">${UNITS.map((u,i)=>{if(unitDone(i))return `<article class="scard">${scenePic(i)}<div class="scap"><span class="disc" style="background:${u.col}">${i+1}</span><div><b>${esc(u.t)}</b><div class="sutra"><b>${esc(u.tag)}</b> · ${esc(u.s)}</div><div class="skid">${esc(u.kid)}</div></div></div></article>`;
+    const left=4-nextStage(i);
+    return `<article class="scard locked"><div class="lockbox"><span class="disc" style="background:#AEB59A">${i+1}</span><b>Secret sutra card</b><span class="note">${i<=S.unlocked?`${left} mission${left>1?'s':''} left in ${esc(u.t)}`:'Not open yet'}</span></div></article>`}).join('')}</div>`;
+}
+
+/* ---------- events ---------- */
+app.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b||b.disabled)return;const d=b.dataset;
+  if(d.go){sfx.tap();go({name:d.go});return}
+  if(d.unit){sfx.tap();lessonIdx=0;go({name:'unit',u:+d.unit});return}
+  if(d.lesson){lessonIdx=Math.max(0,Math.min(UNITS[view.u].cards.length-1,lessonIdx+ +d.lesson));sfx.tap();render();return}
+  if(d.start){quiz=newQuiz(+d.start,d.n||'10');sfx.tap();go({name:'quiz'});return}
+  if(d.k){if(quiz.state!=='ask')return;if(d.k==='del')quiz.input=quiz.input.slice(0,-1);else if(d.k==='ok'){if(quiz.input)answer(quiz.input);return}else if(quiz.input.length<7)quiz.input=(quiz.input+d.k).replace(/^0+(?=\d)/,'');sfx.tap();render();return}
+  if(d.choice!=null){answer(d.choice);return}
+  if('next' in d){nextQ(quiz.i);return}
+  if('quit' in d){view.quitAsk=true;render();return}
+  if('quitno' in d){view.quitAsk=false;render();return}
+  if('quityes' in d){quiz=null;lessonIdx=0;go({name:'home'});return}
+  if(d.open!=null){const r=lastRewards[+d.open];r.open=true;sfx.gift();confetti(r.type==='rare'||r.type==='belt'?150:60);render();return}
+  if(d.wear){const k=d.wear,before=levelOf(power());if(S.eq.includes(k))S.eq=S.eq.filter(x=>x!==k);else equip(k);save();sfx.tap();view.yum=null;if(levelOf(power())>before)confetti(100);render();return}
+  if(d.sp){S.sp=d.sp;save();sfx.tap();view.yum=null;render();return}
+  if(d.skin){S.skin=d.skin;save();sfx.tap();view.yum=null;render();return}
+  if(d.feed){const fd=FOODS.find(x=>x.k===d.feed);if(!fd||S.stars<fd.c)return;const before=levelOf(power());S.stars-=fd.c;S.foodP=(S.foodP||0)+fd.p;S.fed=S.fed||{};S.fed[fd.k]=(S.fed[fd.k]||0)+1;const after=levelOf(power());save();view.yum={n:fd.n,p:fd.p,up:after>before?after:0};sfx.gift();if(after>before)confetti(120);render();return}
+  if(d.gi!=null){S.gi=+d.gi;save();sfx.tap();render();return}
+  if('sound' in d){S.sound=!S.sound;save();render();return}
+  if('exstep' in d){EX.shown++;render();document.querySelector('.lesson')?.classList.remove('pop');return}
+  if('exnew' in d){EX={u:EX.u,q:G[EX.u](),shown:0,n:EX.n+1};render();document.querySelector('.lesson')?.classList.remove('pop');return}
+  if('finishnow' in d){view.quitAsk=false;finish();return}
+  if('export' in d){const code=btoa(unescape(encodeURIComponent(JSON.stringify(S))));view.pcode=code;view.pmsg='Code ready and copied. If it did not copy, select the code in the box and copy it.';try{navigator.clipboard.writeText(code).catch(()=>{view.pmsg='Code ready. Select the code in the box and copy it.';render()})}catch(err){view.pmsg='Code ready. Select the code in the box and copy it.'}render();return}
+  if('import' in d){const t=((document.getElementById('pcode')||{}).value||'').trim();try{const o=JSON.parse(decodeURIComponent(escape(atob(t))));if(!o||typeof o!=='object'||!('stars' in o))throw 0;S=Object.assign(fresh(),o);relock();save();view.pcode='';view.pmsg='Progress loaded!'}catch(err){view.pmsg='That code did not work. Copy the whole code and try again.'}render();return}
+  if('test' in d){S.test=!S.test;save();render();return}
+  if('reset' in d){view.resetAsk=true;render();return}
+  if('resetno' in d){view.resetAsk=false;render();return}
+  if('resetyes' in d){const snd=S.sound;S=fresh();S.sound=snd;save();go({name:'home'});return}
+});
+app.addEventListener('input',e=>{if(e.target.id==='nm'){S.name=e.target.value.trim()||'Ninja';save()}if(e.target.id==='pcode')view.pcode=e.target.value});
+document.addEventListener('keydown',e=>{
+  if(view.name!=='quiz'||!quiz||e.target.tagName==='INPUT')return;const q=quiz.qs[quiz.i];
+  if(quiz.state==='wrong'&&e.key==='Enter'&&!quiz.ta){nextQ(quiz.i);return}
+  if(quiz.state!=='ask'||q.choices)return;
+  if(/^\d$/.test(e.key)&&quiz.input.length<7){quiz.input=(quiz.input+e.key).replace(/^0+(?=\d)/,'');render()}
+  else if(e.key==='Backspace'){quiz.input=quiz.input.slice(0,-1);render()}
+  else if(e.key==='Enter'&&quiz.input)answer(quiz.input);
+});
+render();
+</script>
+
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>
